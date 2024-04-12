@@ -1,4 +1,5 @@
-# Tehnologii: 
+# Tehnologii:
+
 - Java 21
 - Spring Boot 3.2.4
 - Postgresql
@@ -34,6 +35,7 @@
 # Structura detaliata API-ului
 
 # Creează o nouă înregistrare a unui vehicul
+
 - URL: /vehicles
 - METHOD: POST
 - BODY:
@@ -164,9 +166,11 @@
 ```
 
 # Înregistrează un nou proprietar de vehicul
+
 - URL: /owners
 - METHOD: POST
 - BODY:
+
 ```json
 {
   "firstName": "Ion",
@@ -176,8 +180,249 @@
 }
 ```
 
+- RESPONSE BODY:
 
-[//]: # (Pe viitor v-om extrage licensePlate intr-o tabela aparte, pentru ca el este un obiect care apartie lui owner id, nu lui vehicle)
+```json
+{
+  "ownerId": 201,
+  "firstName": "Ion",
+  "lastName": "Popescu",
+  "address": "Str. Libertatii, nr. 10, Bucuresti",
+  "phoneNumber": "060423120"
+}
+```
+
+- RESPONSE STATUS CODE: 201
+
+# Obține o listă a tuturor proprietarilor de vehicule
+
+- URL: /owners
+- METHOD: GET
+- BODY: N/A
+- RESPONSE BODY:
+
+```json
+[
+  {
+    "ownerId": 201,
+    "firstName": "Ion",
+    "lastName": "Popescu",
+    "address": "Str. Libertatii, nr. 10, Bucuresti",
+    "phoneNumber": "060423120"
+  },
+  {
+    "ownerId": 202,
+    "firstName": "Maria",
+    "lastName": "Ionescu",
+    "address": "Str. Revolutiei, nr. 22, Cluj",
+    "phoneNumber": "061223421"
+  }
+]
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Obține detalii despre un proprietar specific
+
+- URL: /owners/{ownerId}
+- METHOD: GET
+- BODY: N/A
+- RESPONSE BODY:
+
+```json
+{
+  "ownerId": 201,
+  "firstName": "Ion",
+  "lastName": "Popescu",
+  "address": "Str. Libertatii, nr. 10, Bucuresti",
+  "phoneNumber": "061223421"
+}
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Actualizează informațiile unui proprietar existent
+
+- URL: /owners/{ownerId}
+- METHOD: PUT
+- BODY:
+
+```json
+{
+  "firstName": "Ionel",
+  "lastName": "Popescu",
+  "address": "Str. Libertatii, nr. 15, Bucuresti",
+  "phoneNumber": "061223421"
+}
+```
+
+- RESPONSE BODY:
+
+```json
+{
+  "ownerId": 201,
+  "firstName": "Ionel",
+  "lastName": "Popescu",
+  "address": "Str. Libertatii, nr. 15, Bucuresti",
+  "phoneNumber": "061223421"
+}
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Șterge un proprietar din sistem
+
+- URL: /owners/{ownerId}
+- METHOD: DELETE
+- BODY: N/A
+- RESPONSE BODY:
+
+```json
+{
+  "message": "Owner deleted successfully"
+}
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Emite o nouă amendă
+
+- URL: POST /fines
+- METHOD: POST
+- BODY:
+
+```json
+{
+  "vehicleId": 1,
+  "ownerId": 101,
+  "amount": 500,
+  "violation": "Speeding",
+  "date": "2024-04-12",
+  "location": "Bucuresti, Sector 1"
+}
+```
+
+- RESPONSE BODY:
+
+```json
+{
+  "fineId": 301,
+  "vehicleId": 1,
+  "ownerId": 101,
+  "amount": 500,
+  "violation": "Speeding",
+  "date": "2024-04-12",
+  "location": "Bucuresti, Sector 1",
+  "message": "Fine issued successfully"
+}
+```
+
+- RESPONSE STATUS CODE: 201
+
+# Obține o listă a tuturor amenzilor
+
+- URL: GET /fines
+- METHOD: GET
+- BODY: N/A
+- RESPONSE BODY:
+
+```json
+[
+  {
+    "fineId": 301,
+    "vehicleId": 1,
+    "ownerId": 101,
+    "amount": 500,
+    "violation": "Speeding",
+    "date": "2024-04-12",
+    "location": "Bucuresti, Sector 1"
+  },
+  {
+    "fineId": 302,
+    "vehicleId": 2,
+    "ownerId": 102,
+    "amount": 300,
+    "violation": "Parking Violation",
+    "date": "2024-04-11",
+    "location": "Cluj, Centru"
+  }
+]
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Obține detalii despre o amendă specifică
+
+- URL: GET /fines/{fineId}
+- METHOD: GET
+- BODY: N/A
+- RESPONSE BODY:
+
+```json
+{
+  "fineId": 301,
+  "vehicleId": 1,
+  "ownerId": 101,
+  "amount": 500,
+  "violation": "SPEEDING",
+  "date": "2024-04-12",
+  "location": "Chisinau, Sector 1"
+}
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Actualizează detalii despre o amendă existentă
+
+- URL: PUT /fines/{fineId}
+- METHOD: PUT
+- BODY:
+
+```json
+{
+  "amount": 550,
+  "violation": "Excessive Speeding",
+  "date": "2024-04-12",
+  "location": "Bucuresti, Sector 1"
+}
+```
+
+- RESPONSE BODY:
+
+```json
+{
+  "fineId": 301,
+  "vehicleId": 1,
+  "ownerId": 101,
+  "amount": 550,
+  "violation": "Excessive Speeding",
+  "date": "2024-04-12",
+  "location": "Bucuresti, Sector 1"
+}
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Anulează o amendă înregistrată
+
+- URL: DELETE /fines/{fineId}
+- METHOD: DELETE
+- BODY: N/A
+- RESPONSE BODY:
+
+```json
+{
+  "message": "Fine deleted successfully"
+}
+```
+
+- RESPONSE STATUS CODE: 200 OK
+
+# Nu implementam urmatoarele pana cand
+
+```text
+Pe viitor v-om extrage licensePlate intr-o tabela aparte, pentru ca el este un obiect care apartie lui owner id, nu lui vehicle
+```
 
 - POST /licensePlate - Creează o nouă înregistrare a unui licensePlate
 - GET /licensePlate - Obține o listă a tuturor licensePlate înregistrate
@@ -192,8 +437,10 @@
 | 2  | DCC 220      | 1       | 2         |
 | 3  | DCC 220      | 1       | 2         |
 
-[//]: # (Pe viitor v-om extrage address intr-o tabela aparte pentru a normaliza tabela)
+```text
+Pe viitor v-om extrage address si phoneNumber intr-o tabela aparte pentru a normaliza tabela
 "address": "Str. Libertatii, nr. 10, Bucuresti",
 "phoneNumber": "060423120"
+``` 
 
 
