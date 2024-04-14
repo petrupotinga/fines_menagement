@@ -26,11 +26,18 @@
 - DELETE /fines/{fineId} - Anulează o amendă înregistrată.
 
 - GET /statistics/fines - Obține statistici generale despre amenzile emise.
-- GET /statistics/fines/{type} - Obține statistici detaliate pe tipuri de amenzi.
-- GET /owners/{ownerId}/vehicles - Listează toate vehiculele deținute de un proprietar specific.
+- GET /statistics/fines/{violation} - Obține statistici detaliate pe tipuri de incalcare de amenzi.
+
+- GET /vehicles/{vehicleId}/owners - Obține istoricul proprietarilor pentru un vehicul specific.
+
 - GET /vehicles/{vehicleId}/fines - Obține istoricul amenzilor pentru un vehicul specific.
+- PUT /vehicles/{vehicleId}/transfer - Transferă proprietatea unui vehicul de la un proprietar la altul
+
+- GET /owners/{ownerId}/vehicles - Listează toate vehiculele deținute de un proprietar specific.
+- GET /owners/{ownerId}/active-fines - Listează toate amenzile neplătite pentru un proprietar specific.
 
 - POST /fines/pay - Procesează plata unei amenzi.
+- GET /fines/recent - Obține o listă a amenzilor emise în ultimele 30 de zile.
 
 # Structura detaliata API-ului
 
