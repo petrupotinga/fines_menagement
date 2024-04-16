@@ -26,7 +26,7 @@ public class VehicleEntity {
     @JoinColumn(name = "owner_id")
     private OwnerEntity owner;
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
-    private List<FineEntity> fines = new ArrayList<>();;
+    private List<FineEntity> fines = new ArrayList<>();
 
     public VehicleEntity(String vin, String licensePlate, String make, String model, int year) {
         this.vin = vin;
