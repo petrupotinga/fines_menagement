@@ -1,4 +1,4 @@
-CREATE TABLE vehicles (
+CREATE TABLE vehicle (
          id SERIAL PRIMARY KEY,
          vin VARCHAR(255) NOT NULL,
          licensePlate VARCHAR(255) NOT NULL,
