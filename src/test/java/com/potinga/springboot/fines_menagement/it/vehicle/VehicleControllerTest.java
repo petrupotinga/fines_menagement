@@ -2,21 +2,33 @@ package com.potinga.springboot.fines_menagement.it.vehicle;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.potinga.springboot.fines_menagement.apiclient.VehicleApiClient;
+import com.potinga.springboot.fines_menagement.common.PostgreSQLContainerInitializer;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleByIdResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
+import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
+import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.utils.JsonReader;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.RequestEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @PostgresIntegrationTest
 class VehicleControllerTest {
@@ -26,12 +38,22 @@ class VehicleControllerTest {
 
     @Autowired
     private VehicleApiClient vehicleApiClient;
+    @Autowired
+    private OwnerRepository ownerRepository;
 
     @Test
     @DisplayName("Create a new vehicle")
     void createVehicleTest() {
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName("asfa");
+        ownerEntity.setLastName("asfa");
+        ownerEntity.setAddress("asfas");
+        ownerEntity.setPhoneNumber("123141412");
+        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+
         //        GIVEN
         CreateVehicleRequest createVehicleRequest = JsonReader.read("db/mocks/vehicles/createVehicleRequest.json", CREATE_VEHICLE_REQUEST_TYPE_REFERENCE);
+        createVehicleRequest.setOwnerId(savedOwner.getId());
 
         //        WHEN
         VehicleCreatedResponse vehicleCreatedResponse = vehicleApiClient.createVehicle(port, createVehicleRequest);
