@@ -4,15 +4,14 @@ public class VehicleCreatedResponse {
     private Long id;
     private String vin;
     private String licensePlate;
-    private int ownerId;
     private String make;
     private String model;
     private int year;
-
+    private long ownerId;
     public VehicleCreatedResponse() {
     }
 
-    public VehicleCreatedResponse(Long id, String vin, String licensePlate, int ownerId, String make, String model, int year) {
+    public VehicleCreatedResponse(Long id, String vin, String licensePlate, long ownerId, String make, String model, int year) {
         this.id = id;
         this.vin = vin;
         this.licensePlate = licensePlate;
@@ -46,11 +45,11 @@ public class VehicleCreatedResponse {
         this.licensePlate = licensePlate;
     }
 
-    public int getOwnerId() {
+    public long getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(int ownerId) {
+    public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
     }
 
