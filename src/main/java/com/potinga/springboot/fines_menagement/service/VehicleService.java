@@ -39,6 +39,7 @@ public class VehicleService {
         response.setVin(saveVehicle.getVin());
         response.setYear(saveVehicle.getYear());
         response.setLicensePlate(saveVehicle.getLicensePlate());
+        response.setOwnerId(saveVehicle.getOwner().getId());
 
         return response;
     }
