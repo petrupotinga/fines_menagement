@@ -1,12 +1,16 @@
 package com.potinga.springboot.fines_menagement.apiclient;
 
 import com.potinga.springboot.fines_menagement.common.BaseRestTemplate;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -28,6 +32,35 @@ public class FineApiClient {
                         .contentType(APPLICATION_JSON)
                         .body(request),
                 new ParameterizedTypeReference<FineCreatedResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+
+    public List<AllFineResponse> getAllFines(String port) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_ALL_FINES.replace("{PORT}", port)).build(),
+                new ParameterizedTypeReference<List<AllFineResponse>>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+
+    public FineByIdResponse getFineById(String port, Long id) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_FINE_BY_ID
+                        .replace("{PORT}", port)
+                        .replace("{ID}", id.toString())
+                ).build(),
+                new ParameterizedTypeReference<FineByIdResponse>() {
                 }
         );
 

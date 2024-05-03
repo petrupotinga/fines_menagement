@@ -3,7 +3,9 @@ package com.potinga.springboot.fines_menagement.it.fine;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.potinga.springboot.fines_menagement.apiclient.FineApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
 import com.potinga.springboot.fines_menagement.entity.FineEntity;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
@@ -20,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -85,88 +89,126 @@ class FineControllerTest {
                 .isEqualTo(expectedFineCreatedResponse);
     }
 
-//    @Test
-//    @DisplayName("Get all fines")
-//    void getAllFinesTest() {
-//        OwnerEntity ownerEntity = new OwnerEntity();
-//        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
-//        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
-//
-//        FineEntity fine1 = new FineEntity();
-//        fine1.setMake("Dacia");
-//        fine1.setModel("Logan");
-//        fine1.setVin("XMCLNDABXHY329876");
-//        fine1.setYear(2016);
-//        fine1.setLicensePlate("DCC220");
-//        fine1.setOwner(savedOwner);
-//
-//        FineEntity fine2 = new FineEntity();
-//        fine2.setMake("Mercedes");
-//        fine2.setModel("E220");
-//        fine2.setVin("PSALNDABXHY329712");
-//        fine2.setYear(2018);
-//        fine2.setLicensePlate("ACD321");
-//        fine2.setOwner(savedOwner);
-//
-//        fineRepository.saveAll(List.of(fine1, fine2));
-//
-//        //        GIVEN
-//        List<AllFineResponse> allFineResponses = JsonReader.read("db/mocks/fines/allFines.json", ALL_VEHICLES_TYPE_REFERENCE);
-//
-//        //        WHEN
-//        List<AllFineResponse> allFines = fineApiClient.getAllFines(port);
-//
-//        //        THEN
-//        allFines.forEach(fine -> assertThat(fine.getId()).isNotNull());
-//
-//        assertThat(allFines)
-//                .hasSize(2)
-//                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-//                .containsAll(allFineResponses);
-//    }
-//
-//    @Test
-//    @DisplayName("Get fine by id")
-//    void getFineByIdTest() {
-//        OwnerEntity ownerEntity = new OwnerEntity();
-//        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
-//        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
-//
-//        FineEntity fineTransient = new FineEntity();
-//        fineTransient.setMake("Dacia");
-//        fineTransient.setModel("Logan");
-//        fineTransient.setVin("XMCLNDABXHY329876");
-//        fineTransient.setYear(2016);
-//        fineTransient.setLicensePlate("DCC220");
-//        fineTransient.setOwner(savedOwner);
-//
-//        FineEntity persistedFine = fineRepository.save(fineTransient);
-//
-//        //        GIVEN
-//        FineByIdResponse expectedFine = JsonReader.read("db/mocks/fines/fineById.json", VEHICLE_BY_ID_TYPE_REFERENCE);
-//
-//        //        WHEN
-//        FineByIdResponse fineResponse = fineApiClient.getFineById(port, persistedFine.getId());
-//
-//        //        THEN
-//        assertThat(fineResponse.getId()).isNotNull();
-//
-//        assertThat(fineResponse)
-//                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
-//                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
-//                        .build())
-//                .isEqualTo(expectedFine);
-//    }
+    @Test
+    @DisplayName("Get all fines")
+    void getAllFinesTest() {
+        //        GIVEN
+        OwnerEntity ownerEntityTransient = new OwnerEntity();
+        ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
+
+        VehicleEntity vehicleEntityTransient = new VehicleEntity();
+        vehicleEntityTransient.setMake(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setModel(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setVin(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setYear(Integer.parseInt(RandomStringUtils.randomNumeric(4)));
+        vehicleEntityTransient.setLicensePlate(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setOwner(persistedOwnerEntity);
+        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
+
+        FineEntity fine1Transient = new FineEntity();
+        fine1Transient.setAmount(100D);
+        fine1Transient.setViolation("Violation");
+        fine1Transient.setDate("3 Decembrie 2023");
+        fine1Transient.setLocation("Alba Iulia");
+        fine1Transient.setOwner(persistedOwnerEntity);
+        fine1Transient.setVehicle(persistedVehicleEntity);
+
+        FineEntity fine2Transient = new FineEntity();
+        fine2Transient.setAmount(100D);
+        fine2Transient.setViolation("Violation");
+        fine2Transient.setDate("3 Decembrie 2023");
+        fine2Transient.setLocation("Alba Iulia");
+        fine2Transient.setOwner(persistedOwnerEntity);
+        fine2Transient.setVehicle(persistedVehicleEntity);
+
+        fineRepository.saveAll(List.of(fine1Transient, fine2Transient));
+
+        //        WHEN
+        List<AllFineResponse> allFinesResponse = fineApiClient.getAllFines(port);
+
+        //        THEN
+        AllFineResponse allFineResponse1 = new AllFineResponse();
+        allFineResponse1.setAmount(100D);
+        allFineResponse1.setViolation("Violation");
+        allFineResponse1.setDate("3 Decembrie 2023");
+        allFineResponse1.setLocation("Alba Iulia");
+        allFineResponse1.setOwnerId(persistedOwnerEntity.getId());
+        allFineResponse1.setVehicleId(persistedVehicleEntity.getId());
+
+        AllFineResponse allFineResponse2 = new AllFineResponse();
+        allFineResponse2.setAmount(100D);
+        allFineResponse2.setViolation("Violation");
+        allFineResponse2.setDate("3 Decembrie 2023");
+        allFineResponse2.setLocation("Alba Iulia");
+        allFineResponse2.setOwnerId(persistedOwnerEntity.getId());
+        allFineResponse2.setVehicleId(persistedVehicleEntity.getId());
+
+        allFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
+
+        assertThat(allFinesResponse)
+                .hasSize(2)
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
+                .containsAll(List.of(allFineResponse1, allFineResponse2));
+    }
+
+    @Test
+    @DisplayName("Get fine by id")
+    void getFineByIdTest() {
+        //        GIVEN
+        OwnerEntity ownerEntityTransient = new OwnerEntity();
+        ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
+
+        VehicleEntity vehicleEntityTransient = new VehicleEntity();
+        vehicleEntityTransient.setMake(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setModel(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setVin(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setYear(Integer.parseInt(RandomStringUtils.randomNumeric(4)));
+        vehicleEntityTransient.setLicensePlate(RandomStringUtils.randomAlphabetic(10));
+        vehicleEntityTransient.setOwner(persistedOwnerEntity);
+        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
+
+        FineEntity fineTransient = new FineEntity();
+        fineTransient.setAmount(100D);
+        fineTransient.setViolation("Violation");
+        fineTransient.setDate("3 Decembrie 2023");
+        fineTransient.setLocation("Alba Iulia");
+        fineTransient.setOwner(persistedOwnerEntity);
+        fineTransient.setVehicle(persistedVehicleEntity);
+
+        FineEntity persistedFine = fineRepository.save(fineTransient);
+
+        //        WHEN
+        FineByIdResponse fineResponse = fineApiClient.getFineById(port, persistedFine.getId());
+
+        //        THEN
+        FineByIdResponse expectedFine = new FineByIdResponse();
+        expectedFine.setAmount(100D);
+        expectedFine.setViolation("Violation");
+        expectedFine.setDate("3 Decembrie 2023");
+        expectedFine.setLocation("Alba Iulia");
+        expectedFine.setOwnerId(persistedOwnerEntity.getId());
+        expectedFine.setVehicleId(persistedVehicleEntity.getId());
+
+        assertThat(fineResponse.getId()).isNotNull();
+
+        assertThat(fineResponse)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
+                        .build())
+                .isEqualTo(expectedFine);
+    }
 
     //    @formatter:off
     private static final TypeReference<CreateFineRequest> CREATE_VEHICLE_REQUEST_TYPE_REFERENCE = new TypeReference<>() {};
     private static final TypeReference<FineCreatedResponse> VEHICLE_CREATED_RESPONSE_TYPE_REFERENCE = new TypeReference<>() {};
-//    private static final TypeReference<List<AllFineResponse>> ALL_VEHICLES_TYPE_REFERENCE = new TypeReference<>() {};
+//    private static final TypeReference<List<AllFineResponse>> ALL_FINES_TYPE_REFERENCE = new TypeReference<>() {};
 //    private static final TypeReference<FineByIdResponse> VEHICLE_BY_ID_TYPE_REFERENCE = new TypeReference<>() {};
 }
