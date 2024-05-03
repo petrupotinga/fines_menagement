@@ -4,11 +4,12 @@ import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleReq
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
 import com.potinga.springboot.fines_menagement.service.VehicleService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/vehicle")
+@RequestMapping("/api/v1/vehicles")
 public class VehicleController {
 
     private final VehicleService vehicleService;
@@ -17,7 +18,7 @@ public class VehicleController {
     }
 
     @PostMapping
-    public VehicleCreatedResponse createVehicle(CreateVehicleRequest request) {
+    public VehicleCreatedResponse createVehicle(@RequestBody CreateVehicleRequest request) {
         VehicleCreatedResponse response = vehicleService.createVehicle(request);
         return response;
     }

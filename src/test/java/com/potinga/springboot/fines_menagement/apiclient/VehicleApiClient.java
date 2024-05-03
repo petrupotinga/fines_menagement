@@ -28,8 +28,9 @@ public class VehicleApiClient {
     private BaseRestTemplate baseRestTemplate;
 
     public VehicleCreatedResponse createVehicle(String port, CreateVehicleRequest request) {
+        String realUrl = SAVE_VEHICLE.replace("{PORT}", port);
         var response = baseRestTemplate.exchange(
-                RequestEntity.post(SAVE_VEHICLE.replace("{PORT}", port))
+                RequestEntity.post(realUrl)
                         .contentType(APPLICATION_JSON)
                         .body(request),
                 new ParameterizedTypeReference<VehicleCreatedResponse>() {}

@@ -22,6 +22,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
 
@@ -45,10 +46,10 @@ class VehicleControllerTest {
     @DisplayName("Create a new vehicle")
     void createVehicleTest() {
         OwnerEntity ownerEntity = new OwnerEntity();
-        ownerEntity.setFirstName("asfa");
-        ownerEntity.setLastName("asfa");
-        ownerEntity.setAddress("asfas");
-        ownerEntity.setPhoneNumber("123141412");
+        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setPhoneNumber(RandomStringUtils.randomAlphabetic(10));
         OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
 
         //        GIVEN
