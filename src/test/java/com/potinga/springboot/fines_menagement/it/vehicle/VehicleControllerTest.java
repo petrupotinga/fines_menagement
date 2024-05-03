@@ -109,16 +109,33 @@ class VehicleControllerTest {
     @Test
     @DisplayName("Get vehicle by id")
     void getVehicleByIdTest() {
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+
+        VehicleEntity vehicleTransient = new VehicleEntity();
+        vehicleTransient.setMake("Dacia");
+        vehicleTransient.setModel("Logan");
+        vehicleTransient.setVin("XMCLNDABXHY329876");
+        vehicleTransient.setYear(2016);
+        vehicleTransient.setLicensePlate("DCC220");
+        vehicleTransient.setOwner(savedOwner);
+
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
+
         //        GIVEN
         VehicleByIdResponse expectedVehicle = JsonReader.read("db/mocks/vehicles/vehicleById.json", VEHICLE_BY_ID_TYPE_REFERENCE);
 
         //        WHEN
-        VehicleByIdResponse vehicle = vehicleApiClient.getVehicleById(port, 1L);
+        VehicleByIdResponse vehicleResponse = vehicleApiClient.getVehicleById(port, persistedVehicle.getId());
 
         //        THEN
-        assertThat(vehicle.getId()).isNotNull();
+        assertThat(vehicleResponse.getId()).isNotNull();
 
-        assertThat(vehicle)
+        assertThat(vehicleResponse)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
