@@ -15,7 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @PostgresIntegrationTest
-public class OwnerControllerTest {
+class OwnerControllerTest {
 
     @LocalServerPort
     private String port;
@@ -27,13 +27,21 @@ public class OwnerControllerTest {
     @DisplayName("Create a new owner")
     void createOwnerTest() {
         //        GIVEN
-        CreateOwnerRequest createOwnerRequest = JsonReader.read("db/mocks/owner/createOwnerRequest.json", CREATE_OWNER_REQUEST_TYPE_REFERENCE);
+        CreateOwnerRequest createOwnerRequest = new CreateOwnerRequest();
+        createOwnerRequest.setFirstName("Vasea");
+        createOwnerRequest.setLastName("Dodon");
+        createOwnerRequest.setAddress("Alba Iulia 55");
+        createOwnerRequest.setPhoneNumber("060232456");
 
         //        WHEN
         OwnerCreatedResponse ownerCreatedResponse = ownerApiClient.createOwner(port, createOwnerRequest);
 
         //        THEN
-        OwnerCreatedResponse expectedOwnerCreatedResponse = JsonReader.read("db/mocks/owner/createOwnerResponse.json", OWNER_CREATED_RESPONSE_TYPE_REFERENCE);
+        OwnerCreatedResponse expectedOwnerCreatedResponse = new OwnerCreatedResponse();
+        expectedOwnerCreatedResponse.setFirstName("Vasea");
+        expectedOwnerCreatedResponse.setLastName("Dodon");
+        expectedOwnerCreatedResponse.setAddress("Alba Iulia 55");
+        expectedOwnerCreatedResponse.setPhoneNumber("060232456");
 
         assertThat(ownerCreatedResponse)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
