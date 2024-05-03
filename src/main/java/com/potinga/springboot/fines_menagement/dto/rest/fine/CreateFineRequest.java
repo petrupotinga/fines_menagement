@@ -7,7 +7,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CreateFineReguest {
+public class CreateFineRequest {
     private double amount;
     private String violation;
     private String date;
@@ -15,7 +15,7 @@ public class CreateFineReguest {
     private Long ownerId;
     private Long vehicleId;
 
-    public CreateFineReguest(double amount, String violation, String date, String location, Long ownerId, Long vehicleId) {
+    public CreateFineRequest(double amount, String violation, String date, String location, Long ownerId, Long vehicleId) {
         this.amount = amount;
         this.violation = violation;
         this.date = date;

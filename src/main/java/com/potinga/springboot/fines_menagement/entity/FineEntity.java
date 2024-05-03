@@ -13,7 +13,7 @@ import lombok.Setter;
 public class FineEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fineid;
+    private Long id;
     private double amount;
     private String violation;
     private String date;

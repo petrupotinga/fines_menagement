@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FineCreatedResponse {
-    private Long fineId;
+    private Long id;
     private Double amount;
     private String violation;
     private String date;
@@ -16,8 +16,8 @@ public class FineCreatedResponse {
     private Long ownerId;
     private Long vehicleId;
 
-    public FineCreatedResponse(Long fineId, Double amount, String violation, String date, String location, Long ownerId, Long vehicleId) {
-        this.fineId = fineId;
+    public FineCreatedResponse(Long id, Double amount, String violation, String date, String location, Long ownerId, Long vehicleId) {
+        this.id = id;
         this.amount = amount;
         this.violation = violation;
         this.date = date;
