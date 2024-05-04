@@ -1,6 +1,5 @@
 package com.potinga.springboot.fines_menagement.it.fine;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.potinga.springboot.fines_menagement.apiclient.FineApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
@@ -13,9 +12,6 @@ import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
 import com.potinga.springboot.fines_menagement.repository.FineRepository;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
-import com.potinga.springboot.fines_menagement.utils.JsonReader;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -205,10 +201,4 @@ class FineControllerTest {
                         .build())
                 .isEqualTo(expectedFine);
     }
-
-    //    @formatter:off
-    private static final TypeReference<CreateFineRequest> CREATE_VEHICLE_REQUEST_TYPE_REFERENCE = new TypeReference<>() {};
-    private static final TypeReference<FineCreatedResponse> VEHICLE_CREATED_RESPONSE_TYPE_REFERENCE = new TypeReference<>() {};
-//    private static final TypeReference<List<AllFineResponse>> ALL_FINES_TYPE_REFERENCE = new TypeReference<>() {};
-//    private static final TypeReference<FineByIdResponse> VEHICLE_BY_ID_TYPE_REFERENCE = new TypeReference<>() {};
 }

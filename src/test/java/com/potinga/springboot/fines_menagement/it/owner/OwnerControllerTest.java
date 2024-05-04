@@ -1,6 +1,5 @@
 package com.potinga.springboot.fines_menagement.it.owner;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.potinga.springboot.fines_menagement.apiclient.OwnerApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
@@ -131,11 +130,4 @@ class OwnerControllerTest {
                         .build())
                 .isEqualTo(expectedOwnerByIdResponse);
     }
-
-    //    @formatter:off
-    private static final TypeReference<CreateOwnerRequest> CREATE_OWNER_REQUEST_TYPE_REFERENCE = new TypeReference<>() {
-    };
-    private static final TypeReference<OwnerCreatedResponse> OWNER_CREATED_RESPONSE_TYPE_REFERENCE = new TypeReference<>() {
-    };
-
 }
