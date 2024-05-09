@@ -5,13 +5,11 @@ import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.CreateOwnerRequest;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerByIdResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerCreatedResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

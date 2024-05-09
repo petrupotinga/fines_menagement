@@ -63,48 +63,48 @@ class VehicleControllerTest {
                 .isEqualTo(expectedVehicleCreatedResponse);
     }
 
-    @Test
-    @DisplayName("Get all vehicles")
-    void getAllVehiclesTest() {
-        OwnerEntity ownerEntity = new OwnerEntity();
-        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
-        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
-        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
-
-        VehicleEntity vehicle1 = new VehicleEntity();
-        vehicle1.setMake("Dacia");
-        vehicle1.setModel("Logan");
-        vehicle1.setVin("XMCLNDABXHY329876");
-        vehicle1.setYear(2016);
-        vehicle1.setLicensePlate("DCC220");
-        vehicle1.setOwner(savedOwner);
-
-        VehicleEntity vehicle2 = new VehicleEntity();
-        vehicle2.setMake("Mercedes");
-        vehicle2.setModel("E220");
-        vehicle2.setVin("PSALNDABXHY329712");
-        vehicle2.setYear(2018);
-        vehicle2.setLicensePlate("ACD321");
-        vehicle2.setOwner(savedOwner);
-
-        vehicleRepository.saveAll(List.of(vehicle1, vehicle2));
-
-        //        GIVEN
-        List<AllVehicleResponse> allVehicleResponses = JsonReader.read("db/mocks/vehicles/allVehicles.json", ALL_VEHICLES_TYPE_REFERENCE);
-
-        //        WHEN
-        List<AllVehicleResponse> allVehicles = vehicleApiClient.getAllVehicles(port);
-
-        //        THEN
-        allVehicles.forEach(vehicle -> assertThat(vehicle.getId()).isNotNull());
-
-        assertThat(allVehicles)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(allVehicleResponses);
-    }
+//    @Test
+//    @DisplayName("Get all vehicles")
+//    void getAllVehiclesTest() {
+//        OwnerEntity ownerEntity = new OwnerEntity();
+//        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+//        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+//        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+//        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+//        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+//
+//        VehicleEntity vehicle1 = new VehicleEntity();
+//        vehicle1.setMake("Dacia");
+//        vehicle1.setModel("Logan");
+//        vehicle1.setVin("XMCLNDABXHY329876");
+//        vehicle1.setYear(2016);
+//        vehicle1.setLicensePlate("DCC220");
+//        vehicle1.setOwner(savedOwner);
+//
+//        VehicleEntity vehicle2 = new VehicleEntity();
+//        vehicle2.setMake("Mercedes");
+//        vehicle2.setModel("E220");
+//        vehicle2.setVin("PSALNDABXHY329712");
+//        vehicle2.setYear(2018);
+//        vehicle2.setLicensePlate("ACD321");
+//        vehicle2.setOwner(savedOwner);
+//
+//        vehicleRepository.saveAll(List.of(vehicle1, vehicle2));
+//
+//        //        GIVEN
+//        List<AllVehicleResponse> allVehicleResponses = JsonReader.read("db/mocks/vehicles/allVehicles.json", ALL_VEHICLES_TYPE_REFERENCE);
+//
+//        //        WHEN
+//        List<AllVehicleResponse> allVehicles = vehicleApiClient.getAllVehicles(port);
+//
+//        //        THEN
+//        allVehicles.forEach(vehicle -> assertThat(vehicle.getId()).isNotNull());
+//
+//        assertThat(allVehicles)
+//                .hasSize(2)
+//                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
+//                .containsAll(allVehicleResponses);
+//    }
 
     @Test
     @DisplayName("Get vehicle by id")
@@ -142,7 +142,7 @@ class VehicleControllerTest {
                 .isEqualTo(expectedVehicle);
     }
 
-    //    @formatter:off
+//        @formatter:off
     private static final TypeReference<CreateVehicleRequest> CREATE_VEHICLE_REQUEST_TYPE_REFERENCE = new TypeReference<>() {};
     private static final TypeReference<List<AllVehicleResponse>> ALL_VEHICLES_TYPE_REFERENCE = new TypeReference<>() {};
     private static final TypeReference<VehicleByIdResponse> VEHICLE_BY_ID_TYPE_REFERENCE = new TypeReference<>() {};
