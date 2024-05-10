@@ -8,6 +8,8 @@ import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class VehicleService {
 
@@ -42,5 +44,23 @@ public class VehicleService {
         response.setOwnerId(saveVehicle.getOwner().getId());
 
         return response;
+    }
+
+    public VehicleCreatedResponse getVehicleById(Long id) {
+        Optional<VehicleEntity> optionalVehicle = vehicleRepository.findById(id);
+        if (optionalVehicle.isPresent()) {
+            VehicleEntity vehicle = optionalVehicle.get();
+            VehicleCreatedResponse response = new VehicleCreatedResponse();
+            response.setId(vehicle.getId());
+            response.setMake(vehicle.getMake());
+            response.setModel(vehicle.getModel());
+            response.setVin(vehicle.getVin());
+            response.setYear(vehicle.getYear());
+            response.setLicensePlate(vehicle.getLicensePlate());
+            response.setOwnerId(vehicle.getOwner().getId());
+            return response;
+        } else {
+            throw new RuntimeException("Vehicle not found for id: " + id);
+        }
     }
 }
