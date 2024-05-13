@@ -1,12 +1,10 @@
 package com.potinga.springboot.fines_menagement.controller;
 
 import com.potinga.springboot.fines_menagement.dto.rest.owner.CreateOwnerRequest;
+import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerByIdResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerCreatedResponse;
 import com.potinga.springboot.fines_menagement.service.OwnerService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/owners")
@@ -19,7 +17,10 @@ public class OwnerController {
 
     @PostMapping
     public OwnerCreatedResponse createOwner(@RequestBody CreateOwnerRequest request) {
-        OwnerCreatedResponse response = ownerService.createOwner(request);
-        return response;
+        return ownerService.createOwner(request);
+    }
+    @GetMapping("/{id}")
+    public OwnerByIdResponse getOwnerById(@PathVariable("id") Long id) {
+        return ownerService.getOwnerById(id);
     }
 }
