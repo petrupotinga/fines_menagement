@@ -3,6 +3,10 @@ package com.potinga.springboot.fines_menagement.it.vehicle;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.potinga.springboot.fines_menagement.apiclient.VehicleApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleByLPResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.*;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
@@ -60,52 +64,12 @@ class VehicleControllerTest {
                 .isEqualTo(expectedVehicleCreatedResponse);
     }
 
-//    @Test
-//    @DisplayName("Get all vehicles")
-//    void getAllVehiclesTest() {
-//        OwnerEntity ownerEntity = new OwnerEntity();
-//        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
-//        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
-//        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
-//
-//        VehicleEntity vehicle1 = new VehicleEntity();
-//        vehicle1.setMake("Dacia");
-//        vehicle1.setModel("Logan");
-//        vehicle1.setVin("XMCLNDABXHY329876");
-//        vehicle1.setYear(2016);
-//        vehicle1.setLicensePlate("DCC220");
-//        vehicle1.setOwner(savedOwner);
-//
-//        VehicleEntity vehicle2 = new VehicleEntity();
-//        vehicle2.setMake("Mercedes");
-//        vehicle2.setModel("E220");
-//        vehicle2.setVin("PSALNDABXHY329712");
-//        vehicle2.setYear(2018);
-//        vehicle2.setLicensePlate("ACD321");
-//        vehicle2.setOwner(savedOwner);
-//
-//        vehicleRepository.saveAll(List.of(vehicle1, vehicle2));
-//
-//        //        GIVEN
-//        List<AllVehicleResponse> allVehicleResponses = JsonReader.read("db/mocks/vehicles/allVehicles.json", ALL_VEHICLES_TYPE_REFERENCE);
-//
-//        //        WHEN
-//        List<AllVehicleResponse> allVehicles = vehicleApiClient.getAllVehicles(port);
-//
-//        //        THEN
-//        allVehicles.forEach(vehicle -> assertThat(vehicle.getId()).isNotNull());
-//
-//        assertThat(allVehicles)
-//                .hasSize(2)
-//                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-//                .containsAll(allVehicleResponses);
-//    }
-
     @Test
-    @DisplayName("Get vehicle by id")
-    void getVehicleByIdTest() {
+    @DisplayName("Get all vehicles")
+    void getAllVehiclesTest() {
+        //        GIVEN
+        vehicleRepository.deleteAll();
+
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
@@ -113,32 +77,123 @@ class VehicleControllerTest {
         ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
         OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
 
-        VehicleEntity vehicleTransient = new VehicleEntity();
-        vehicleTransient.setMake("Dacia");
-        vehicleTransient.setModel("Logan");
-        vehicleTransient.setVin("XMCLNDABXHY329876");
-        vehicleTransient.setYear(2016);
-        vehicleTransient.setLicensePlate("DCC220");
-        vehicleTransient.setOwner(savedOwner);
+        VehicleEntity vehicle1 = new VehicleEntity();
+        vehicle1.setMake("Dacia");
+        vehicle1.setModel("Logan");
+        vehicle1.setVin("XMCLNDABXHY329876");
+        vehicle1.setYear(2016);
+        vehicle1.setLicensePlate("DCC220");
+        vehicle1.setOwner(savedOwner);
 
-        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
+        VehicleEntity vehicle2 = new VehicleEntity();
+        vehicle2.setMake("Mercedes");
+        vehicle2.setModel("E220");
+        vehicle2.setVin("PSALNDABXHY329712");
+        vehicle2.setYear(2018);
+        vehicle2.setLicensePlate("ACD321");
+        vehicle2.setOwner(savedOwner);
+
+        vehicleRepository.saveAll(List.of(vehicle1, vehicle2));
 
         //        GIVEN
-        VehicleByIdResponse expectedVehicle = JsonReader.read("db/mocks/vehicles/vehicleById.json", VEHICLE_BY_ID_TYPE_REFERENCE);
+        List<AllVehicleResponse> allVehicleResponses = JsonReader.read("db/mocks/vehicles/allVehicles.json", ALL_VEHICLES_TYPE_REFERENCE);
 
         //        WHEN
-        VehicleByIdResponse vehicleResponse = vehicleApiClient.getVehicleById(port, persistedVehicle.getId());
+        List<AllVehicleResponse> allVehicles = vehicleApiClient.getAllVehicles(port);
 
         //        THEN
-        assertThat(vehicleResponse.getId()).isNotNull();
+        allVehicles.forEach(vehicle -> assertThat(vehicle.getId()).isNotNull());
 
-        assertThat(vehicleResponse)
-                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
-                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
-                        .build())
-                .isEqualTo(expectedVehicle);
+        assertThat(allVehicles)
+                .hasSize(2)
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
+                .containsAll(allVehicleResponses);
     }
 
+//    @Test
+//    @DisplayName("Get vehicle by id")
+//    void getVehicleByIdTest() {
+//        OwnerEntity ownerEntity = new OwnerEntity();
+//        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+//        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+//        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+//        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+//        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+//
+//        VehicleEntity vehicleTransient = new VehicleEntity();
+//        vehicleTransient.setMake("Dacia");
+//        vehicleTransient.setModel("Logan");
+//        vehicleTransient.setVin("XMCLNDABXHY329876");
+//        vehicleTransient.setYear(2016);
+//        vehicleTransient.setLicensePlate("DCC220");
+//        vehicleTransient.setOwner(savedOwner);
+//
+//        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
+//
+//        //        GIVEN
+//        VehicleByIdResponse expectedVehicle = JsonReader.read("db/mocks/vehicles/vehicleById.json", VEHICLE_BY_ID_TYPE_REFERENCE);
+//
+//        //        WHEN
+//        VehicleByIdResponse vehicleResponse = vehicleApiClient.getVehicleById(port, persistedVehicle.getId());
+//
+//        //        THEN
+//        assertThat(vehicleResponse.getId()).isNotNull();
+//
+//        assertThat(vehicleResponse)
+//                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+//                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
+//                        .build())
+//                .isEqualTo(expectedVehicle);
+//    }
+@Test
+@DisplayName("Get vehicle by licensePlate")
+void getVehicleByLicensePlateTest() {
+    OwnerEntity ownerEntity = new OwnerEntity();
+    ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+    ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+    ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+    ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+    OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+
+    VehicleEntity vehicleTransient = new VehicleEntity();
+    vehicleTransient.setMake("Dacia");
+    vehicleTransient.setModel("Logan");
+    vehicleTransient.setVin("XMCLNDABXHY329876");
+    vehicleTransient.setYear(2016);
+    vehicleTransient.setLicensePlate("DCC220");
+    vehicleTransient.setOwner(savedOwner);
+
+    VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
+
+    //        GIVEN
+    VehicleByLPResponse expectedVehicle = JsonReader.read("db/mocks/vehicles/vehicleByLicensePlate.json", VEHICLE_BY_LICENSEPLATE_TYPE_REFERENCE);
+
+    //        WHEN
+    VehicleByLPResponse vehicleResponse = vehicleApiClient.getVehicleByLicensePlate(port, persistedVehicle.getLicensePlate());
+
+    //        THEN
+
+    assertThat(vehicleResponse.getLicensePlate()).isNotNull();
+
+    assertThat(vehicleResponse)
+            .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                    .withIgnoredFields("id") // Ignores the 'id' field in comparison
+                    .build())
+            .isEqualTo(expectedVehicle);
+}
+
+    //        @formatter:off
+    private static final TypeReference<CreateVehicleRequest> CREATE_VEHICLE_REQUEST_TYPE_REFERENCE = new TypeReference<>() {
+    };
+    private static final TypeReference<List<AllVehicleResponse>> ALL_VEHICLES_TYPE_REFERENCE = new TypeReference<>() {
+    };
+
+    //    private static final TypeReference<VehicleByIdResponse> VEHICLE_BY_ID_TYPE_REFERENCE = new TypeReference<>() {};
+    private static final TypeReference<VehicleByLPResponse> VEHICLE_BY_LICENSEPLATE_TYPE_REFERENCE = new TypeReference<>() {
+    };
+
+    private static final TypeReference<VehicleCreatedResponse> VEHICLE_CREATED_RESPONSE_TYPE_REFERENCE = new TypeReference<>() {
+    };
     @Test
     @DisplayName("Update vehicle")
     void updateVehicleTest() {

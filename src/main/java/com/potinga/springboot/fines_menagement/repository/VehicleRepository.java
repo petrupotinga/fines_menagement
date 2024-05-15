@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
+    Optional<VehicleEntity> findByLicensePlate(String licensePlate);
     Optional<VehicleEntity> findByVin(String vin);
-
-    Optional<VehicleEntity> findByLicensePlate(String licencePlate);
 }

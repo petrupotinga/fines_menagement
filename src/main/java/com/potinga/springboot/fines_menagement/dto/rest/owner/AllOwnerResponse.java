@@ -13,6 +13,12 @@ public class AllOwnerResponse {
     private String lastName;
     private String address;
     private String phoneNumber;
+    public AllOwnerResponse(String firstName, String lastName, String address, String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
 
     public AllOwnerResponse(Long id, String firstName, String lastName, String address, String phoneNumber) {
         this.id = id;
@@ -21,4 +27,5 @@ public class AllOwnerResponse {
         this.address = address;
         this.phoneNumber = phoneNumber;
     }
+
 }
