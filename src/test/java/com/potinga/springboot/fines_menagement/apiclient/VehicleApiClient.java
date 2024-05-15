@@ -1,10 +1,7 @@
 package com.potinga.springboot.fines_menagement.apiclient;
 
 import com.potinga.springboot.fines_menagement.common.BaseRestTemplate;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
@@ -61,6 +58,22 @@ public class VehicleApiClient {
                         .replace("{ID}", id.toString())
                 ).build(),
                 new ParameterizedTypeReference<VehicleByIdResponse>() {}
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+
+    public UpdateVehicleResponse updateVehicle(String port, Long id, UpdateVehicleRequest updateRequest) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.put(UPDATE_VEHICLE_BY_ID
+                                .replace("{PORT}", port)
+                                .replace("{ID}", id.toString())
+                        ).contentType(APPLICATION_JSON)
+                        .body(updateRequest),
+                new ParameterizedTypeReference<UpdateVehicleResponse>() {}
         );
 
         assertThat(response).isNotNull();

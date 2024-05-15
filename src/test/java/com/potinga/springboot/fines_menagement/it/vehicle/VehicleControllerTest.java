@@ -3,10 +3,7 @@ package com.potinga.springboot.fines_menagement.it.vehicle;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.potinga.springboot.fines_menagement.apiclient.VehicleApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.*;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
@@ -140,6 +137,50 @@ class VehicleControllerTest {
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
                 .isEqualTo(expectedVehicle);
+    }
+
+    @Test
+    @DisplayName("Update vehicle")
+    void updateVehicleTest() {
+        // Create a vehicle to update
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+
+        VehicleEntity vehicleTransient = new VehicleEntity();
+        vehicleTransient.setMake("Dacia");
+        vehicleTransient.setModel("Logan");
+        vehicleTransient.setVin("XMCLNDABXHY329876");
+        vehicleTransient.setYear(2016);
+        vehicleTransient.setLicensePlate("DCC220");
+        vehicleTransient.setOwner(savedOwner);
+
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
+
+        // Update request
+        UpdateVehicleRequest updateRequest = new UpdateVehicleRequest();
+        updateRequest.setMake("Toyota");
+        updateRequest.setModel("Camry");
+        updateRequest.setVin("VIN123456789");
+        updateRequest.setYear(2021);
+        updateRequest.setLicensePlate("XYZ 987");
+
+        Long vehicleId = persistedVehicle.getId();
+
+        vehicleApiClient.updateVehicle(port, vehicleId, updateRequest);
+
+        // Fetch the updated vehicle
+        VehicleByIdResponse updatedVehicle = vehicleApiClient.getVehicleById(port, vehicleId);
+
+        // Assertions to verify the update
+        assertThat(updatedVehicle.getMake()).isEqualTo("Toyota");
+        assertThat(updatedVehicle.getModel()).isEqualTo("Camry");
+        assertThat(updatedVehicle.getYear()).isEqualTo(2021);
+        assertThat(updatedVehicle.getLicensePlate()).isEqualTo("XYZ 987");
+        assertThat(updatedVehicle.getVin()).isEqualTo("VIN123456789");
     }
 
 //        @formatter:off
