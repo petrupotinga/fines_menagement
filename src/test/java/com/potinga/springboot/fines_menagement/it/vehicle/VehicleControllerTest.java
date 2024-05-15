@@ -183,6 +183,28 @@ class VehicleControllerTest {
         assertThat(updatedVehicle.getVin()).isEqualTo("VIN123456789");
     }
 
+    @Test
+    @DisplayName("Transfer Vehicle to Another Owner")
+    void transferVehicleToAnotherOwnerTest() {
+        // Setup initial owner and vehicle
+        OwnerEntity originalOwner = new OwnerEntity("John", "Doe", "1234 Elm Street", "5551234567");
+        originalOwner = ownerRepository.save(originalOwner);
+        VehicleEntity vehicle = new VehicleEntity("VIN123456789", "XYZ 987", "Toyota", "Corolla", 2019);
+        vehicle.setOwner(originalOwner);
+        vehicle = vehicleRepository.save(vehicle);
+
+        // Setup new owner
+        OwnerEntity newOwner = new OwnerEntity("Jane", "Smith", "5678 Maple Street", "5559876543");
+        newOwner = ownerRepository.save(newOwner);
+
+        // Perform the transfer
+        vehicleApiClient.transferVehicleToAnotherOwner(port, vehicle.getId(), newOwner.getId());
+
+        // Verify the transfer
+        VehicleEntity updatedVehicle = vehicleRepository.findById(vehicle.getId()).orElseThrow();
+        assertThat(updatedVehicle.getOwner().getId()).isEqualTo(newOwner.getId());
+    }
+
 //        @formatter:off
     private static final TypeReference<CreateVehicleRequest> CREATE_VEHICLE_REQUEST_TYPE_REFERENCE = new TypeReference<>() {};
     private static final TypeReference<List<AllVehicleResponse>> ALL_VEHICLES_TYPE_REFERENCE = new TypeReference<>() {};

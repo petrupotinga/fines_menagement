@@ -19,6 +19,7 @@ public class VehicleApiClient {
     private static final String GET_ALL_VEHICLES = "http://localhost:{PORT}/api/v1/vehicles";
     private static final String GET_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
     private static final String UPDATE_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
+    private static final String TRANSFER_VEHICLE_TO_ANOTHER_OWNER = "http://localhost:{PORT}/api/v1/vehicles/{VEHICLE_ID}/transfer?newOwnerId={NEW_OWNER_ID}";
     private static final String DELETE_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
 
     @Autowired
@@ -80,5 +81,19 @@ public class VehicleApiClient {
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
 
         return response.getBody();
+    }
+
+    public void transferVehicleToAnotherOwner(String port, Long vehicleId, Long newOwnerId) {
+        String URL = TRANSFER_VEHICLE_TO_ANOTHER_OWNER
+                .replace("{PORT}", port)
+                .replace("{VEHICLE_ID}", vehicleId.toString())
+                .replace("{NEW_OWNER_ID}", newOwnerId.toString());
+        var response = baseRestTemplate.exchange(
+                RequestEntity.post(URL).build(),
+                new ParameterizedTypeReference<Void>() {}
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
     }
 }
