@@ -1,7 +1,9 @@
 package com.potinga.springboot.fines_menagement.service;
 
+import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
 import com.potinga.springboot.fines_menagement.entity.FineEntity;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
@@ -9,6 +11,10 @@ import com.potinga.springboot.fines_menagement.repository.FineRepository;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FineService {
@@ -48,5 +54,38 @@ public class FineService {
         response.setVehicleId(saveFine.getVehicle().getId());
 
         return response;
+    }
+
+    public FineByIdResponse getFineById(Long id) {
+        Optional<FineEntity> optionalFine = fineRepository.findById(id);
+        if (optionalFine.isPresent()) {
+            FineEntity fine = optionalFine.get();
+            FineByIdResponse response = new FineByIdResponse();
+            response.setId(fine.getId());
+            response.setAmount(fine.getAmount());
+            response.setViolation(fine.getViolation());
+            response.setDate(fine.getDate());
+            response.setLocation(fine.getLocation());
+            response.setOwnerId(fine.getOwner().getId());
+            response.setVehicleId(fine.getVehicle().getId());
+            return response;
+        } else {
+            throw new RuntimeException("Fine not found for id: " + id);
+        }
+    }
+    public List<AllFineResponse> getAllFines() {
+        List<FineEntity> fines = fineRepository.findAll();
+
+        return fines.stream().map(fine -> {
+            AllFineResponse response = new AllFineResponse();
+            response.setId(fine.getId());
+            response.setAmount(fine.getAmount());
+            response.setViolation(fine.getViolation());
+            response.setDate(fine.getDate());
+            response.setLocation(fine.getLocation());
+            response.setOwnerId(fine.getOwner().getId());
+            response.setVehicleId(fine.getVehicle().getId());
+            return response;
+        }).collect(Collectors.toList());
     }
 }
