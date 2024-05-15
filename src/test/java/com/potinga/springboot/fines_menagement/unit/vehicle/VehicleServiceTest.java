@@ -65,14 +65,14 @@ class VehicleServiceTest {
         VehicleEntity existingVehicle = new VehicleEntity();
         existingVehicle.setLicensePlate(request.getLicensePlate());
 
-        when(vehicleRepository.findByLicencePlate(request.getLicensePlate())).thenReturn(Optional.of(existingVehicle));
+        when(vehicleRepository.findByLicensePlate(request.getLicensePlate())).thenReturn(Optional.of(existingVehicle));
 
         DuplicateRecordException thrown = assertThrows(DuplicateRecordException.class, () -> {
             vehicleService.createVehicle(request);
         });
 
         assertEquals("Could not create vehicle with same licence plate: %s".formatted(request.getLicensePlate()), thrown.getMessage());
-        verify(vehicleRepository, times(1)).findByLicencePlate(request.getLicensePlate());
+        verify(vehicleRepository, times(1)).findByLicensePlate(request.getLicensePlate());
         verify(vehicleRepository, never()).save(any(VehicleEntity.class));
     }
 }
