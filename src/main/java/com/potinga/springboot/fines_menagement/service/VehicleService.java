@@ -1,9 +1,6 @@
 package com.potinga.springboot.fines_menagement.service;
 
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleByLPResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.*;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
@@ -49,7 +46,8 @@ public class VehicleService {
 
         return response;
     }
-    //    public VehicleByIdResponse getVehicleById(Long id) {
+//        public VehicleByIdResponse getVehicleById(Long id) {
+//
 //        Optional<VehicleEntity> optionalVehicle = vehicleRepository.findById(id);
 //        if (optionalVehicle.isPresent()) {
 //            VehicleEntity vehicle = optionalVehicle.get();
