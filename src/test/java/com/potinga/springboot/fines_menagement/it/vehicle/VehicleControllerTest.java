@@ -10,6 +10,7 @@ import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
 import com.potinga.springboot.fines_menagement.utils.JsonReader;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,14 +35,24 @@ class VehicleControllerTest {
     @Autowired
     private VehicleRepository vehicleRepository;
     @BeforeEach
-    void cleanDatabase() {
-        vehicleRepository.deleteAll();
+    void setUp() {
+        // Curăță baza de date înainte de fiecare test
         ownerRepository.deleteAll();
+        vehicleRepository.deleteAll();
+    }
+    @AfterEach
+    void tearDown() {
+        // Curăță baza de date după fiecare test pentru a asigura izolarea testelor
+        ownerRepository.deleteAll();
+        vehicleRepository.deleteAll();
     }
 
     @Test
     @DisplayName("Create a new vehicle")
     void createVehicleTest() {
+        ownerRepository.deleteAll();
+        vehicleRepository.deleteAll();
+
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
@@ -113,6 +124,43 @@ class VehicleControllerTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
                 .containsAll(allVehicleResponses);
     }
+    @Test
+    @DisplayName("Get vehicle by licensePlate")
+    void getVehicleByLicensePlateTest() {
+
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+
+        VehicleEntity vehicleTransient = new VehicleEntity();
+        vehicleTransient.setMake("Dacia");
+        vehicleTransient.setModel("Logan");
+        vehicleTransient.setVin("XMCLNDABXHY329876");
+        vehicleTransient.setYear(2016);
+        vehicleTransient.setLicensePlate("DCC220");
+        vehicleTransient.setOwner(savedOwner);
+
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
+
+        //        GIVEN
+        VehicleByLPResponse expectedVehicle = JsonReader.read("db/mocks/vehicles/vehicleByLicensePlate.json", VEHICLE_BY_LICENSEPLATE_TYPE_REFERENCE);
+
+        //        WHEN
+        VehicleByLPResponse vehicleResponse = vehicleApiClient.getVehicleByLicensePlate(port, persistedVehicle.getLicensePlate());
+
+        //        THEN
+
+        assertThat(vehicleResponse.getLicensePlate()).isNotNull();
+
+        assertThat(vehicleResponse)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
+                        .build())
+                .isEqualTo(expectedVehicle);
+    }
 
 //    @Test
 //    @DisplayName("Get vehicle by id")
@@ -152,43 +200,7 @@ class VehicleControllerTest {
 //                .isEqualTo(expectedVehicle);
 //    }
 
-    @Test
-    @DisplayName("Get vehicle by licensePlate")
-    void getVehicleByLicensePlateTest() {
 
-        OwnerEntity ownerEntity = new OwnerEntity();
-        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
-        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
-        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
-
-        VehicleEntity vehicleTransient = new VehicleEntity();
-        vehicleTransient.setMake("Dacia");
-        vehicleTransient.setModel("Logan");
-        vehicleTransient.setVin("XMCLNDABXHY329876");
-        vehicleTransient.setYear(2016);
-        vehicleTransient.setLicensePlate("DCC220");
-        vehicleTransient.setOwner(savedOwner);
-
-        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
-
-        //        GIVEN
-        VehicleByLPResponse expectedVehicle = JsonReader.read("db/mocks/vehicles/vehicleByLicensePlate.json", VEHICLE_BY_LICENSEPLATE_TYPE_REFERENCE);
-
-        //        WHEN
-        VehicleByLPResponse vehicleResponse = vehicleApiClient.getVehicleByLicensePlate(port, persistedVehicle.getLicensePlate());
-
-        //        THEN
-
-        assertThat(vehicleResponse.getLicensePlate()).isNotNull();
-
-        assertThat(vehicleResponse)
-                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
-                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
-                        .build())
-                .isEqualTo(expectedVehicle);
-    }
 //
 //    @Test
 //    @DisplayName("Update vehicle")
@@ -267,5 +279,4 @@ class VehicleControllerTest {
     };
     private static final TypeReference<VehicleByLPResponse> VEHICLE_BY_LICENSEPLATE_TYPE_REFERENCE = new TypeReference<>() {
     };
-
 }
