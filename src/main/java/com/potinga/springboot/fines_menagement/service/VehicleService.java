@@ -46,24 +46,24 @@ public class VehicleService {
 
         return response;
     }
-//        public VehicleByIdResponse getVehicleById(Long id) {
-//
-//        Optional<VehicleEntity> optionalVehicle = vehicleRepository.findById(id);
-//        if (optionalVehicle.isPresent()) {
-//            VehicleEntity vehicle = optionalVehicle.get();
-//            VehicleByIdResponse response = new VehicleByIdResponse();
-//            response.setId(vehicle.getId());
-//            response.setMake(vehicle.getMake());
-//            response.setModel(vehicle.getModel());
-//            response.setVin(vehicle.getVin());
-//            response.setYear(vehicle.getYear());
-//            response.setLicensePlate(vehicle.getLicensePlate());
-//            response.setOwnerId(vehicle.getOwner().getId());
-//            return response;
-//        } else {
-//            throw new RuntimeException("Vehicle not found for id: " + id);
-//        }
-//    }
+        public VehicleByIdResponse getVehicleById(Long id) {
+
+        Optional<VehicleEntity> optionalVehicle = vehicleRepository.findById(id);
+        if (optionalVehicle.isPresent()) {
+            VehicleEntity vehicle = optionalVehicle.get();
+            VehicleByIdResponse response = new VehicleByIdResponse();
+            response.setId(vehicle.getId());
+            response.setMake(vehicle.getMake());
+            response.setModel(vehicle.getModel());
+            response.setVin(vehicle.getVin());
+            response.setYear(vehicle.getYear());
+            response.setLicensePlate(vehicle.getLicensePlate());
+            response.setOwnerId(vehicle.getOwner().getId());
+            return response;
+        } else {
+            throw new RuntimeException("Vehicle not found for id: " + id);
+        }
+    }
     public List<AllVehicleResponse> getAllVehicles() {
         List<VehicleEntity> vehicles = vehicleRepository.findAll();
         return vehicles.stream().map(vehicle -> {
