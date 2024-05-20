@@ -1,6 +1,10 @@
 package com.potinga.springboot.fines_menagement.apiclient;
 
 import com.potinga.springboot.fines_menagement.common.BaseRestTemplate;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleByLPResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,6 +22,8 @@ public class VehicleApiClient {
     private static final String SAVE_VEHICLE = "http://localhost:{PORT}/api/v1/vehicles";
     private static final String GET_ALL_VEHICLES = "http://localhost:{PORT}/api/v1/vehicles";
     private static final String GET_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
+    private static final String GET_VEHICLE_BY_LICENSEPLATE = "http://localhost:{PORT}/api/v1/vehicles/{LICENSEPLATE}";
+
     private static final String UPDATE_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
     private static final String TRANSFER_VEHICLE_TO_ANOTHER_OWNER = "http://localhost:{PORT}/api/v1/vehicles/{VEHICLE_ID}/transfer?newOwnerId={NEW_OWNER_ID}";
     private static final String DELETE_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
@@ -43,7 +49,8 @@ public class VehicleApiClient {
     public List<AllVehicleResponse> getAllVehicles(String port) {
         var response = baseRestTemplate.exchange(
                 RequestEntity.get(GET_ALL_VEHICLES.replace("{PORT}", port)).build(),
-                new ParameterizedTypeReference<List<AllVehicleResponse>>() {}
+                new ParameterizedTypeReference<List<AllVehicleResponse>>() {
+                }
         );
 
         assertThat(response).isNotNull();
@@ -52,13 +59,27 @@ public class VehicleApiClient {
         return response.getBody();
     }
 
-    public VehicleByIdResponse getVehicleById(String port, Long id) {
+    //    public VehicleByIdResponse getVehicleById(String port, Long id) {
+//        var response = baseRestTemplate.exchange(
+//                RequestEntity.get(GET_VEHICLE_BY_ID
+//                        .replace("{PORT}", port)
+//                        .replace("{ID}", id.toString())
+//                ).build(),
+//                new ParameterizedTypeReference<VehicleByIdResponse>() {}
+//        );
+//
+//        assertThat(response).isNotNull();
+//        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+//
+//        return response.getBody();
+//    }
+    public VehicleByLPResponse getVehicleByLicensePlate(String port, String licensePlate) {
         var response = baseRestTemplate.exchange(
-                RequestEntity.get(GET_VEHICLE_BY_ID
+                RequestEntity.get(GET_VEHICLE_BY_LICENSEPLATE
                         .replace("{PORT}", port)
-                        .replace("{ID}", id.toString())
-                ).build(),
-                new ParameterizedTypeReference<VehicleByIdResponse>() {}
+                        .replace("{LICENSEPLATE}", licensePlate)).build(),
+                new ParameterizedTypeReference<VehicleByLPResponse>() {
+                }
         );
 
         assertThat(response).isNotNull();
