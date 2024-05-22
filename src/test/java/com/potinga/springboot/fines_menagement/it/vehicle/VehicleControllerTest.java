@@ -34,12 +34,14 @@ class VehicleControllerTest {
     private OwnerRepository ownerRepository;
     @Autowired
     private VehicleRepository vehicleRepository;
+
     @BeforeEach
     void setUp() {
         // Curăță baza de date înainte de fiecare test
         ownerRepository.deleteAll();
         vehicleRepository.deleteAll();
     }
+
     @AfterEach
     void tearDown() {
         // Curăță baza de date după fiecare test pentru a asigura izolarea testelor
@@ -60,10 +62,6 @@ class VehicleControllerTest {
         ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
         OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
 
-        // Mesaj de debug pentru a verifica id-ul proprietarului salvat
-        System.out.println("savedOwner.getId(): " + savedOwner.getId());
-
-
         //        GIVEN
         CreateVehicleRequest createVehicleRequest = JsonReader.read("db/mocks/vehicles/createVehicleRequest.json", CREATE_VEHICLE_REQUEST_TYPE_REFERENCE);
         createVehicleRequest.setOwnerId(savedOwner.getId());
@@ -73,6 +71,7 @@ class VehicleControllerTest {
 
         //        THEN
         VehicleCreatedResponse expectedVehicleCreatedResponse = JsonReader.read("db/mocks/vehicles/createVehicleResponse.json", VEHICLE_CREATED_RESPONSE_TYPE_REFERENCE);
+        expectedVehicleCreatedResponse.setOwnerId(savedOwner.getId());
 
         assertThat(vehicleCreatedResponse)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
@@ -111,7 +110,10 @@ class VehicleControllerTest {
         vehicleRepository.saveAll(List.of(vehicle1, vehicle2));
 
         //        GIVEN
-        List<AllVehicleResponse> allVehicleResponses = JsonReader.read("db/mocks/vehicles/allVehicles.json", ALL_VEHICLES_TYPE_REFERENCE);
+        List<AllVehicleResponse> allVehicleResponses = JsonReader.read("db/mocks/vehicles/allVehicles.json", ALL_VEHICLES_TYPE_REFERENCE)
+                .stream()
+                .peek(vehicle -> vehicle.setOwnerId(savedOwner.getId()))
+                .toList();
 
         //        WHEN
         List<AllVehicleResponse> allVehicles = vehicleApiClient.getAllVehicles(port);
@@ -124,10 +126,10 @@ class VehicleControllerTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
                 .containsAll(allVehicleResponses);
     }
+
     @Test
     @DisplayName("Get vehicle by licensePlate")
     void getVehicleByLicensePlateTest() {
-
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
@@ -147,12 +149,12 @@ class VehicleControllerTest {
 
         //        GIVEN
         VehicleByLPResponse expectedVehicle = JsonReader.read("db/mocks/vehicles/vehicleByLicensePlate.json", VEHICLE_BY_LICENSEPLATE_TYPE_REFERENCE);
+        expectedVehicle.setOwnerId(savedOwner.getId());
 
         //        WHEN
         VehicleByLPResponse vehicleResponse = vehicleApiClient.getVehicleByLicensePlate(port, persistedVehicle.getLicensePlate());
 
         //        THEN
-
         assertThat(vehicleResponse.getLicensePlate()).isNotNull();
 
         assertThat(vehicleResponse)
