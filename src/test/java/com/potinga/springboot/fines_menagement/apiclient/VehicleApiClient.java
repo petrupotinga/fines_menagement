@@ -1,10 +1,6 @@
 package com.potinga.springboot.fines_menagement.apiclient;
 
 import com.potinga.springboot.fines_menagement.common.BaseRestTemplate;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleByLPResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.vehicle.VehicleCreatedResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,7 +17,7 @@ public class VehicleApiClient {
 
     private static final String SAVE_VEHICLE = "http://localhost:{PORT}/api/v1/vehicles";
     private static final String GET_ALL_VEHICLES = "http://localhost:{PORT}/api/v1/vehicles";
-    private static final String GET_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
+    private static final String GET_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/id/{ID}";
     private static final String GET_VEHICLE_BY_LICENSEPLATE = "http://localhost:{PORT}/api/v1/vehicles/{LICENSEPLATE}";
 
     private static final String UPDATE_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
@@ -59,20 +55,22 @@ public class VehicleApiClient {
         return response.getBody();
     }
 
-    //    public VehicleByIdResponse getVehicleById(String port, Long id) {
-//        var response = baseRestTemplate.exchange(
-//                RequestEntity.get(GET_VEHICLE_BY_ID
-//                        .replace("{PORT}", port)
-//                        .replace("{ID}", id.toString())
-//                ).build(),
-//                new ParameterizedTypeReference<VehicleByIdResponse>() {}
-//        );
-//
-//        assertThat(response).isNotNull();
-//        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-//
-//        return response.getBody();
-//    }
+    public VehicleByIdResponse getVehicleById(String port, Long id) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_VEHICLE_BY_ID
+                        .replace("{PORT}", port)
+                        .replace("{ID}", id.toString())
+                ).build(),
+                new ParameterizedTypeReference<VehicleByIdResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+
     public VehicleByLPResponse getVehicleByLicensePlate(String port, String licensePlate) {
         var response = baseRestTemplate.exchange(
                 RequestEntity.get(GET_VEHICLE_BY_LICENSEPLATE
