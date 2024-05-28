@@ -5,6 +5,7 @@ import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -93,6 +94,34 @@ public class VehicleService {
             return response;
         } else {
             throw new RuntimeException("Vehicle with license plate " + licensePlate + " not found");
+        }
+    }
+    public UpdateVehicleResponse updateVehicle(Long vehicleId, UpdateVehicleRequest updateRequest) {
+        Optional<VehicleEntity> optionalVehicle = vehicleRepository.findById(vehicleId);
+        if (optionalVehicle.isPresent()) {
+            VehicleEntity vehicle = optionalVehicle.get();
+            vehicle.setMake(updateRequest.getMake());
+            vehicle.setModel(updateRequest.getModel());
+            vehicle.setVin(updateRequest.getVin());
+            vehicle.setYear(updateRequest.getYear());
+            vehicle.setLicensePlate(updateRequest.getLicensePlate());
+
+//            OwnerEntity owner = ownerRepository.findById(updateRequest.getOwnerId())
+//                    .orElseThrow(() -> new RuntimeException("Owner not found"));
+//            vehicle.setOwner(owner);
+//
+            vehicleRepository.save(vehicle);
+
+            UpdateVehicleResponse response = new UpdateVehicleResponse();
+            response.setMake(vehicle.getMake());
+            response.setModel(vehicle.getModel());
+            response.setVin(vehicle.getVin());
+            response.setYear(vehicle.getYear());
+            response.setLicensePlate(vehicle.getLicensePlate());
+
+            return response;
+        } else {
+            throw new RuntimeException("Vehicle with ID " + vehicleId + " not found");
         }
     }
 }
