@@ -106,10 +106,6 @@ public class VehicleService {
             vehicle.setYear(updateRequest.getYear());
             vehicle.setLicensePlate(updateRequest.getLicensePlate());
 
-//            OwnerEntity owner = ownerRepository.findById(updateRequest.getOwnerId())
-//                    .orElseThrow(() -> new RuntimeException("Owner not found"));
-//            vehicle.setOwner(owner);
-//
             vehicleRepository.save(vehicle);
 
             UpdateVehicleResponse response = new UpdateVehicleResponse();
