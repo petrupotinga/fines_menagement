@@ -120,4 +120,15 @@ public class VehicleService {
             throw new RuntimeException("Vehicle with ID " + vehicleId + " not found");
         }
     }
+    public void transferVehicleToAnotherOwner(Long vehicleId, Long newOwnerId) {
+        VehicleEntity vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + vehicleId));
+
+        OwnerEntity newOwner = ownerRepository.findById(newOwnerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found with id: " + newOwnerId));
+
+        vehicle.setOwner(newOwner);
+
+        vehicleRepository.save(vehicle);
+    }
 }

@@ -2,6 +2,8 @@ package com.potinga.springboot.fines_menagement.controller;
 
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.*;
 import com.potinga.springboot.fines_menagement.service.VehicleService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,5 +40,15 @@ public class VehicleController {
     @PutMapping("/{id}")
     public UpdateVehicleResponse updateVehicle(@PathVariable Long id, @RequestBody UpdateVehicleRequest updateRequest) {
         return vehicleService.updateVehicle(id, updateRequest);
+    }
+
+    @PostMapping("/{vehicleId}/transfer")
+    public ResponseEntity<Void> transferVehicleToAnotherOwner(
+            @PathVariable Long vehicleId,
+            @RequestParam Long newOwnerId) {
+
+        vehicleService.transferVehicleToAnotherOwner(vehicleId, newOwnerId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
