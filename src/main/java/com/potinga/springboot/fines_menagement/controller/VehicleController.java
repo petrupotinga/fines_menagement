@@ -42,10 +42,10 @@ public class VehicleController {
         return vehicleService.updateVehicle(id, updateRequest);
     }
 
-    @PutMapping("/{vehicleId}/transfer/{newOwnerId}")
+    @PostMapping("/{vehicleId}/transfer")
     public ResponseEntity<Void> transferVehicleToAnotherOwner(
             @PathVariable Long vehicleId,
-            @PathVariable Long newOwnerId) {
+            @RequestParam Long newOwnerId) {
 
         vehicleService.transferVehicleToAnotherOwner(vehicleId, newOwnerId);
 
