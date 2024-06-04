@@ -130,4 +130,10 @@ public class VehicleService {
 
         vehicleRepository.save(vehicle);
     }
+    public void deleteVehicle(Long vehicleId){
+        VehicleEntity vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + vehicleId));
+
+        vehicleRepository.delete(vehicle);
+    }
 }
