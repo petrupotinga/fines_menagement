@@ -46,9 +46,12 @@ public class VehicleController {
     public ResponseEntity<Void> transferVehicleToAnotherOwner(
             @PathVariable Long vehicleId,
             @RequestParam Long newOwnerId) {
-
         vehicleService.transferVehicleToAnotherOwner(vehicleId, newOwnerId);
-
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteVehicle(@PathVariable Long vehicleId) {
+        vehicleService.deleteVehicle(vehicleId);
     }
 }
