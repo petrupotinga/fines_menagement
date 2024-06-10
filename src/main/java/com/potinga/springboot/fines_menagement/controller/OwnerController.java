@@ -1,9 +1,6 @@
 package com.potinga.springboot.fines_menagement.controller;
 
-import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.CreateOwnerRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.owner.*;
 import com.potinga.springboot.fines_menagement.service.OwnerService;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +19,19 @@ public class OwnerController {
     public OwnerCreatedResponse createOwner(@RequestBody CreateOwnerRequest request) {
         return ownerService.createOwner(request);
     }
+
     @GetMapping("/{id}")
     public OwnerByIdResponse getOwnerById(@PathVariable("id") Long id) {
         return ownerService.getOwnerById(id);
     }
+
     @GetMapping
     public List<AllOwnerResponse> getAllOwners() {
         return ownerService.getAllOwners();
+    }
+
+    @PutMapping("/{id}")
+    public UpdateOwnerResponse updateVehicle(@PathVariable Long id, @RequestBody UpdateOwnerRequest updateRequest) {
+        return ownerService.updateVehicle(id, updateRequest);
     }
 }

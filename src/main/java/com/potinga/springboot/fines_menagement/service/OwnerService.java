@@ -1,9 +1,6 @@
 package com.potinga.springboot.fines_menagement.service;
 
-import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.CreateOwnerRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerCreatedResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerByIdResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.owner.*;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import org.springframework.stereotype.Service;
@@ -67,6 +64,28 @@ public class OwnerService {
             return response;
         } else {
             throw new RuntimeException("Owner not found for id: " + id);
+        }
+    }
+    public UpdateOwnerResponse updateVehicle(Long ownerId, UpdateOwnerRequest updateRequest) {
+        Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);
+        if (optionalOwner.isPresent()) {
+            OwnerEntity owner = optionalOwner.get();
+            owner.setFirstName(updateRequest.getFirstName());
+            owner.setLastName(updateRequest.getLastName());
+            owner.setAddress(updateRequest.getAddress());
+            owner.setPhoneNumber(updateRequest.getPhoneNumber());
+
+            ownerRepository.save(owner);
+
+            UpdateOwnerResponse response = new UpdateOwnerResponse();
+            response.setFirstName(owner.getFirstName());
+            response.setLastName(owner.getLastName());
+            response.setAddress(owner.getAddress());
+            response.setPhoneNumber(owner.getPhoneNumber());
+
+            return response;
+        } else {
+            throw new RuntimeException("Owner with ID " + ownerId + " not found");
         }
     }
 }
