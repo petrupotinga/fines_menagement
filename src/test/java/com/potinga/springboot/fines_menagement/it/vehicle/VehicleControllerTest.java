@@ -265,6 +265,33 @@ class VehicleControllerTest {
         VehicleEntity updatedVehicle = vehicleRepository.findById(vehicle.getId()).orElseThrow();
         assertThat(updatedVehicle.getOwner().getId()).isEqualTo(newOwner.getId());
     }
+    @Test
+    @DisplayName("Delete vehicle by id")
+    void deleteVehicleTest() {
+        // Setup initial owner and vehicle
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity savedOwner = ownerRepository.save(ownerEntity);
+
+        VehicleEntity vehicleEntity = new VehicleEntity();
+        vehicleEntity.setMake("Dacia");
+        vehicleEntity.setModel("Logan");
+        vehicleEntity.setVin("XMCLNDABXHY329876");
+        vehicleEntity.setYear(2016);
+        vehicleEntity.setLicensePlate("DCC220");
+        vehicleEntity.setOwner(savedOwner);
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleEntity);
+
+        // Perform the deletion
+        vehicleApiClient.deleteVehicle(port, persistedVehicle.getId());
+
+        // Verify the vehicle is deleted
+        boolean vehicleExists = vehicleRepository.existsById(persistedVehicle.getId());
+        assertThat(vehicleExists).isFalse();
+    }
 
     //        @formatter:off
     private static final TypeReference<CreateVehicleRequest> CREATE_VEHICLE_REQUEST_TYPE_REFERENCE = new TypeReference<>() {
