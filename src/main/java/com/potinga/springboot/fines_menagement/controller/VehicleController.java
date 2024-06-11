@@ -37,6 +37,7 @@ public class VehicleController {
     public List<AllVehicleResponse> getAllVehicles() {
         return vehicleService.getAllVehicles();
     }
+
     @PutMapping("/{id}")
     public UpdateVehicleResponse updateVehicle(@PathVariable Long id, @RequestBody UpdateVehicleRequest updateRequest) {
         return vehicleService.updateVehicle(id, updateRequest);
