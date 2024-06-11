@@ -88,4 +88,10 @@ public class OwnerService {
             throw new RuntimeException("Owner with ID " + ownerId + " not found");
         }
     }
+    public void deleteOwner(Long ownerId){
+        OwnerEntity owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found with id: " + ownerId));
+
+        ownerRepository.delete(owner);
+    }
 }

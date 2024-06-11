@@ -163,6 +163,22 @@ class OwnerControllerTest {
         assertThat(updatedVehicle.getPhoneNumber()).isEqualTo("070123456");
 
     }
+    @Test
+    @DisplayName("delete an owner")
+    public void deleteOwner(){
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName("Vasea");
+        ownerEntity.setLastName("Dodon");
+        ownerEntity.setAddress("Alba Iulia 55");
+        ownerEntity.setPhoneNumber("060232456");
+
+        OwnerEntity persistedOwner = ownerRepository.save(ownerEntity);
+        // Perform the deletion
+        ownerApiClient.deleteOwner(port, persistedOwner.getId());
+        // Verify the vehicle is deleted
+        boolean vehicleExists = ownerRepository.existsById(persistedOwner.getId());
+        assertThat(vehicleExists).isFalse();
+    }
 
     //    @formatter:off
     private static final TypeReference<CreateOwnerRequest> CREATE_OWNER_REQUEST_TYPE_REFERENCE = new TypeReference<>() {
