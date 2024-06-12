@@ -1,8 +1,12 @@
 package com.potinga.springboot.fines_menagement.dto.rest.vehicle;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
+@NoArgsConstructor
 @Getter
 @Setter
 public class AllVehicleResponse {
@@ -13,9 +17,6 @@ public class AllVehicleResponse {
     private String make;
     private String model;
     private int year;
-
-    public AllVehicleResponse() {
-    }
 
     public AllVehicleResponse(String vin, String licensePlate, Long ownerId, String make, String model, int year) {
         this.vin = vin;

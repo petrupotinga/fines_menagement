@@ -80,6 +80,8 @@ class FineControllerTest {
     @Test
     @DisplayName("Get all fines")
     void getAllFinesTest() {
+        fineRepository.deleteAll();
+
         //        GIVEN
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);

@@ -2,6 +2,9 @@ package com.potinga.springboot.fines_menagement.it.owner;
 
 import com.potinga.springboot.fines_menagement.apiclient.OwnerApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
+import com.potinga.springboot.fines_menagement.common.random.owner.RandomCreateOwnerRequest;
+import com.potinga.springboot.fines_menagement.common.random.owner.RandomOwner;
+import com.potinga.springboot.fines_menagement.common.random.owner.RandomUpdateOwnerRequest;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.*;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
@@ -13,6 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,21 +36,18 @@ class OwnerControllerTest {
     void createOwnerTest() {
         ownerRepository.deleteAll();
         //        GIVEN
-        CreateOwnerRequest createOwnerRequest = new CreateOwnerRequest();
-        createOwnerRequest.setFirstName("Vasea");
-        createOwnerRequest.setLastName("Dodon");
-        createOwnerRequest.setAddress("Alba Iulia 55");
-        createOwnerRequest.setPhoneNumber("060232456");
+        CreateOwnerRequest createOwnerRequest = RandomCreateOwnerRequest.builder().build().get();
 
         //        WHEN
         OwnerCreatedResponse ownerCreatedResponse = ownerApiClient.createOwner(port, createOwnerRequest);
 
         //        THEN
-        OwnerCreatedResponse expectedOwnerCreatedResponse = new OwnerCreatedResponse();
-        expectedOwnerCreatedResponse.setFirstName("Vasea");
-        expectedOwnerCreatedResponse.setLastName("Dodon");
-        expectedOwnerCreatedResponse.setAddress("Alba Iulia 55");
-        expectedOwnerCreatedResponse.setPhoneNumber("060232456");
+        OwnerCreatedResponse expectedOwnerCreatedResponse = OwnerCreatedResponse.builder()
+                .firstName(createOwnerRequest.getFirstName())
+                .lastName(createOwnerRequest.getLastName())
+                .address(createOwnerRequest.getAddress())
+                .phoneNumber(createOwnerRequest.getPhoneNumber())
+                .build();
 
         assertThat(ownerCreatedResponse)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
@@ -60,11 +61,7 @@ class OwnerControllerTest {
     void getOwnerById() {
         ownerRepository.deleteAll();
         //        GIVEN
-        OwnerEntity ownerEntity = new OwnerEntity();
-        ownerEntity.setFirstName("Vasea");
-        ownerEntity.setLastName("Dodon");
-        ownerEntity.setAddress("Alba Iulia 55");
-        ownerEntity.setPhoneNumber("060232456");
+        OwnerEntity ownerEntity = RandomOwner.builder().build().get();
 
         OwnerEntity persistedOwner = ownerRepository.save(ownerEntity);
 
@@ -72,11 +69,12 @@ class OwnerControllerTest {
         OwnerByIdResponse ownerByIdResponse = ownerApiClient.getOwnerById(port, persistedOwner.getId());
 
         //        THEN
-        OwnerByIdResponse expectedOwnerByIdResponse = new OwnerByIdResponse();
-        expectedOwnerByIdResponse.setFirstName("Vasea");
-        expectedOwnerByIdResponse.setLastName("Dodon");
-        expectedOwnerByIdResponse.setAddress("Alba Iulia 55");
-        expectedOwnerByIdResponse.setPhoneNumber("060232456");
+        OwnerByIdResponse expectedOwnerByIdResponse = OwnerByIdResponse.builder()
+                .firstName(ownerEntity.getFirstName())
+                .lastName(ownerEntity.getLastName())
+                .address(ownerEntity.getAddress())
+                .phoneNumber(ownerEntity.getPhoneNumber())
+                .build();
 
         //        THEN
         assertThat(ownerByIdResponse.getId()).isNotNull();
@@ -94,17 +92,8 @@ class OwnerControllerTest {
         //        GIVEN
         ownerRepository.deleteAll();
 
-        OwnerEntity ownerEntity1 = new OwnerEntity();
-        ownerEntity1.setFirstName("Vasea");
-        ownerEntity1.setLastName("Dodon");
-        ownerEntity1.setAddress("Alba Iulia 55");
-        ownerEntity1.setPhoneNumber("060232456");
-
-        OwnerEntity ownerEntity2 = new OwnerEntity();
-        ownerEntity2.setFirstName("Igor");
-        ownerEntity2.setLastName("Cataraga");
-        ownerEntity2.setAddress("Tudor Vladimirescu 12");
-        ownerEntity2.setPhoneNumber("060435262");
+        OwnerEntity ownerEntity1 = RandomOwner.builder().build().get();
+        OwnerEntity ownerEntity2 = RandomOwner.builder().build().get();
 
         ownerRepository.saveAll(List.of(ownerEntity1, ownerEntity2));
 
@@ -112,17 +101,20 @@ class OwnerControllerTest {
         List<AllOwnerResponse> allOwners = ownerApiClient.getAllOwners(port);
 
         //        THEN
-        AllOwnerResponse allOwnerResponse1 = new AllOwnerResponse();
-        allOwnerResponse1.setFirstName("Vasea");
-        allOwnerResponse1.setLastName("Dodon");
-        allOwnerResponse1.setAddress("Alba Iulia 55");
-        allOwnerResponse1.setPhoneNumber("060232456");
+        AllOwnerResponse allOwnerResponse1 = AllOwnerResponse.builder()
+                .firstName(ownerEntity1.getFirstName())
+                .lastName(ownerEntity1.getLastName())
+                .address(ownerEntity1.getAddress())
+                .phoneNumber(ownerEntity1.getPhoneNumber())
+                .build();
 
-        AllOwnerResponse allOwnerResponse2 = new AllOwnerResponse();
-        allOwnerResponse2.setFirstName("Igor");
-        allOwnerResponse2.setLastName("Cataraga");
-        allOwnerResponse2.setAddress("Tudor Vladimirescu 12");
-        allOwnerResponse2.setPhoneNumber("060435262");
+
+        AllOwnerResponse allOwnerResponse2 = AllOwnerResponse.builder()
+                .firstName(ownerEntity2.getFirstName())
+                .lastName(ownerEntity2.getLastName())
+                .address(ownerEntity2.getAddress())
+                .phoneNumber(ownerEntity2.getPhoneNumber())
+                .build();
 
         //        THEN
         allOwners.forEach(owner -> assertThat(owner.getId()).isNotNull());
@@ -132,57 +124,58 @@ class OwnerControllerTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
                 .containsAll(List.of(allOwnerResponse1, allOwnerResponse2));
     }
+
     @Test
     @DisplayName("Update an owner")
     void updateOwnerTest() {
         ownerRepository.deleteAll();
         //        GIVEN
-        OwnerEntity ownerTransient = new OwnerEntity();
-        ownerTransient.setFirstName("Vasea");
-        ownerTransient.setLastName("Dodon");
-        ownerTransient.setAddress("Alba Iulia 55");
-        ownerTransient.setPhoneNumber("060232456");
+        OwnerEntity ownerTransient = RandomOwner.builder().build().get();
 
         OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
 
-        UpdateOwnerRequest updateOwnerRequest = new UpdateOwnerRequest();
-        updateOwnerRequest.setFirstName("Ion");
-        updateOwnerRequest.setLastName("Creanga");
-        updateOwnerRequest.setAddress("Str. Eminescu 10");
-        updateOwnerRequest.setPhoneNumber("070123456");
+        UpdateOwnerRequest updateOwnerRequest = RandomUpdateOwnerRequest.builder().build().get();
 
         Long ownerId = persistedOwner.getId();
 
-        ownerApiClient.updateOwner(port, ownerId, updateOwnerRequest);
+        UpdateOwnerResponse updateOwnerResponse = ownerApiClient.updateOwner(port, ownerId, updateOwnerRequest);
 
-        OwnerByIdResponse updatedVehicle = ownerApiClient.getOwnerById(port, ownerId);
+        OwnerEntity ownerInDb = ownerRepository.findById(ownerId).orElseThrow();
 
-        assertThat(updatedVehicle.getFirstName()).isEqualTo("Ion");
-        assertThat(updatedVehicle.getLastName()).isEqualTo("Creanga");
-        assertThat(updatedVehicle.getAddress()).isEqualTo("Str. Eminescu 10");
-        assertThat(updatedVehicle.getPhoneNumber()).isEqualTo("070123456");
+        assertThat(updateOwnerResponse)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
+                        .build())
+                .isEqualTo(
+                        UpdateOwnerResponse.builder()
+                                .firstName(updateOwnerRequest.getFirstName())
+                                .lastName(updateOwnerRequest.getLastName())
+                                .address(updateOwnerRequest.getAddress())
+                                .phoneNumber(updateOwnerRequest.getPhoneNumber())
+                                .build()
+                );
 
+        assertThat(updateOwnerResponse)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
+                        .build())
+                .isEqualTo(
+                        UpdateOwnerResponse.builder()
+                                .firstName(ownerInDb.getFirstName())
+                                .lastName(ownerInDb.getLastName())
+                                .address(ownerInDb.getAddress())
+                                .phoneNumber(ownerInDb.getPhoneNumber())
+                                .build()
+                );
     }
-    @Test
-    @DisplayName("delete an owner")
-    public void deleteOwner(){
-        OwnerEntity ownerEntity = new OwnerEntity();
-        ownerEntity.setFirstName("Vasea");
-        ownerEntity.setLastName("Dodon");
-        ownerEntity.setAddress("Alba Iulia 55");
-        ownerEntity.setPhoneNumber("060232456");
 
-        OwnerEntity persistedOwner = ownerRepository.save(ownerEntity);
-        // Perform the deletion
+    @Test
+    @DisplayName("Delete an owner")
+    void deleteOwner() {
+        OwnerEntity ownerTransient = RandomOwner.builder().build().get();
+        OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
         ownerApiClient.deleteOwner(port, persistedOwner.getId());
-        // Verify the vehicle is deleted
         boolean vehicleExists = ownerRepository.existsById(persistedOwner.getId());
         assertThat(vehicleExists).isFalse();
     }
-
-    //    @formatter:off
-    private static final TypeReference<CreateOwnerRequest> CREATE_OWNER_REQUEST_TYPE_REFERENCE = new TypeReference<>() {
-    };
-    private static final TypeReference<OwnerCreatedResponse> OWNER_CREATED_RESPONSE_TYPE_REFERENCE = new TypeReference<>() {
-    };
 }

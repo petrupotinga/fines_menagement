@@ -2,9 +2,11 @@ package com.potinga.springboot.fines_menagement.dto.rest.vehicle;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Builder
+@NoArgsConstructor
 @Getter
 @Setter
 public class CreateVehicleRequest {
@@ -15,9 +17,6 @@ public class CreateVehicleRequest {
     private String model;
     private int year;
 
-    public CreateVehicleRequest() {
-    }
-
     public CreateVehicleRequest(String vin, String licensePlate, Long ownerId, String make, String model, int year) {
         this.vin = vin;
         this.licensePlate = licensePlate;
@@ -26,6 +25,4 @@ public class CreateVehicleRequest {
         this.model = model;
         this.year = year;
     }
-
-
 }

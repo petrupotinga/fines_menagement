@@ -1,5 +1,14 @@
 package com.potinga.springboot.fines_menagement.dto.rest.vehicle;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Builder
+@NoArgsConstructor
+@Getter
+@Setter
 public class VehicleCreatedResponse {
     private Long id;
     private String vin;
@@ -8,72 +17,14 @@ public class VehicleCreatedResponse {
     private String model;
     private int year;
     private long ownerId;
-    public VehicleCreatedResponse() {
-    }
 
-    public VehicleCreatedResponse(Long id, String vin, String licensePlate, long ownerId, String make, String model, int year) {
+    public VehicleCreatedResponse(Long id, String vin, String licensePlate, String make, String model, int year, long ownerId) {
         this.id = id;
         this.vin = vin;
         this.licensePlate = licensePlate;
-        this.ownerId = ownerId;
         this.make = make;
         this.model = model;
         this.year = year;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getVin() {
-        return vin;
-    }
-
-    public void setVin(String vin) {
-        this.vin = vin;
-    }
-
-    public String getLicensePlate() {
-        return licensePlate;
-    }
-
-    public void setLicensePlate(String licensePlate) {
-        this.licensePlate = licensePlate;
-    }
-
-    public long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
-    }
-
-    public String getMake() {
-        return make;
-    }
-
-    public void setMake(String make) {
-        this.make = make;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 }
