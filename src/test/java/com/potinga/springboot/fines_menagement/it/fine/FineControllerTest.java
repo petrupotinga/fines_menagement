@@ -2,6 +2,10 @@ package com.potinga.springboot.fines_menagement.it.fine;
 
 import com.potinga.springboot.fines_menagement.apiclient.FineApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
+import com.potinga.springboot.fines_menagement.common.random.fine.RandomCreateFineRequest;
+import com.potinga.springboot.fines_menagement.common.random.fine.RandomFine;
+import com.potinga.springboot.fines_menagement.common.random.owner.RandomOwner;
+import com.potinga.springboot.fines_menagement.common.random.vehicle.RandomVehicle;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
@@ -12,17 +16,13 @@ import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
 import com.potinga.springboot.fines_menagement.repository.FineRepository;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
-import lombok.Builder;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
-import java.util.Random;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -287,83 +287,5 @@ class FineControllerTest {
                         .build())
                 .isEqualTo(expectedFine);
     }
-
-    @Builder
-    static class RandomOwner implements Supplier<OwnerEntity> {
-        @Builder.Default
-        private final String firstName = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private final String lastName = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private final String address = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
-
-        @Override
-        public OwnerEntity get() {
-            return new OwnerEntity(firstName, lastName, address, phoneNumber);
-        }
-    }
-
-    @Builder
-    static class RandomVehicle implements Supplier<VehicleEntity> {
-
-        @Builder.Default
-        private String vin = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private String licensePlate = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private String make = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private String model = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private int year = Integer.parseInt(RandomStringUtils.randomNumeric(4));
-
-        @Override
-        public VehicleEntity get() {
-            return new VehicleEntity(vin, licensePlate, make, model, year);
-        }
-    }
-
-    @Builder
-    static class RandomFine implements Supplier<FineEntity> {
-        private static final Random RANDOM = new Random();
-
-        @Builder.Default
-        private double amount = RANDOM.nextDouble();
-        @Builder.Default
-        private String violation = RandomStringUtils.randomAlphabetic(10);
-        @Builder.Default
-        private String date = RandomStringUtils.randomAlphabetic(10);
-        @Builder.Default
-        private String location = RandomStringUtils.randomAlphabetic(10);
-
-        @Override
-        public FineEntity get() {
-            return new FineEntity(amount, violation, date, location);
-        }
-    }
-
-    @Builder
-    static class RandomCreateFineRequest implements Supplier<CreateFineRequest> {
-        private static final Random RANDOM = new Random();
-
-        @Builder.Default
-        private double amount = RANDOM.nextDouble();
-        @Builder.Default
-        private String violation = RandomStringUtils.randomAlphabetic(10);
-        @Builder.Default
-        private String date = RandomStringUtils.randomAlphabetic(10);
-        @Builder.Default
-        private String location = RandomStringUtils.randomAlphabetic(10);
-        @Builder.Default
-        private Long ownerId = null;
-        @Builder.Default
-        private Long vehicleId = null;
-
-        @Override
-        public CreateFineRequest get() {
-            return new CreateFineRequest(amount, violation, date, location, ownerId, vehicleId);
-        }
-    }
 }
+
