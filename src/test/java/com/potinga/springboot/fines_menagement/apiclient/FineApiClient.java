@@ -20,6 +20,8 @@ public class FineApiClient {
     private static final String SAVE_FINE = "http://localhost:{PORT}/api/v1/fines";
     private static final String GET_ALL_FINES = "http://localhost:{PORT}/api/v1/fines";
     private static final String GET_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
+    private static final String GET_VEHICLE_FINES_BY_VIN = "http://localhost:{PORT}/api/v1/fines/vehicleVin/{VIN}";
+    private static final String GET_VEHICLE_FINES_BY_LICENSE_PLATE = "http://localhost:{PORT}/api/v1/fines/vehicleLicensePlate/{LICENSE_PLATE}";
     private static final String UPDATE_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
     private static final String DELETE_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
 
@@ -61,6 +63,38 @@ public class FineApiClient {
                         .replace("{ID}", id.toString())
                 ).build(),
                 new ParameterizedTypeReference<FineByIdResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+
+    public List<AllFineResponse> getAllVehicleFinesByVin(String port, String vin) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_VEHICLE_FINES_BY_VIN
+                        .replace("{PORT}", port)
+                        .replace("{VIN}", vin)
+                ).build(),
+                new ParameterizedTypeReference<List<AllFineResponse>>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+
+    public List<AllFineResponse> getAllVehicleFinesByLicensePlate(String port, String licensePlate) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_VEHICLE_FINES_BY_LICENSE_PLATE
+                        .replace("{PORT}", port)
+                        .replace("{LICENSE_PLATE}", licensePlate)
+                ).build(),
+                new ParameterizedTypeReference<List<AllFineResponse>>() {
                 }
         );
 
