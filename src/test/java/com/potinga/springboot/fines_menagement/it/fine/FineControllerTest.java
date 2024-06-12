@@ -12,6 +12,7 @@ import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
 import com.potinga.springboot.fines_menagement.repository.FineRepository;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
+import lombok.Builder;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,19 +44,10 @@ class FineControllerTest {
     @DisplayName("Create a new fine")
     void createFineTest() {
         //        GIVEN
-        OwnerEntity ownerEntityTransient = new OwnerEntity();
-        ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
-        VehicleEntity vehicleEntityTransient = new VehicleEntity();
-        vehicleEntityTransient.setMake(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setModel(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setVin(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setYear(Integer.parseInt(RandomStringUtils.randomNumeric(4)));
-        vehicleEntityTransient.setLicensePlate(RandomStringUtils.randomAlphabetic(10));
+        VehicleEntity vehicleEntityTransient =  RandomVehicle.builder().build().get();
         vehicleEntityTransient.setOwner(persistedOwnerEntity);
         VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
 
@@ -89,19 +82,10 @@ class FineControllerTest {
     @DisplayName("Get all fines")
     void getAllFinesTest() {
         //        GIVEN
-        OwnerEntity ownerEntityTransient = new OwnerEntity();
-        ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
-        VehicleEntity vehicleEntityTransient = new VehicleEntity();
-        vehicleEntityTransient.setMake(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setModel(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setVin(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setYear(Integer.parseInt(RandomStringUtils.randomNumeric(4)));
-        vehicleEntityTransient.setLicensePlate(RandomStringUtils.randomAlphabetic(10));
+        VehicleEntity vehicleEntityTransient  = RandomVehicle.builder().build().get();
         vehicleEntityTransient.setOwner(persistedOwnerEntity);
         VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
 
@@ -155,19 +139,10 @@ class FineControllerTest {
     @DisplayName("Get fine by id")
     void getFineByIdTest() {
         //        GIVEN
-        OwnerEntity ownerEntityTransient = new OwnerEntity();
-        ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
-        ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
-        VehicleEntity vehicleEntityTransient = new VehicleEntity();
-        vehicleEntityTransient.setMake(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setModel(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setVin(RandomStringUtils.randomAlphabetic(10));
-        vehicleEntityTransient.setYear(Integer.parseInt(RandomStringUtils.randomNumeric(4)));
-        vehicleEntityTransient.setLicensePlate(RandomStringUtils.randomAlphabetic(10));
+        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
         vehicleEntityTransient.setOwner(persistedOwnerEntity);
         VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
 
@@ -200,5 +175,42 @@ class FineControllerTest {
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
                 .isEqualTo(expectedFine);
+    }
+
+    @Builder
+    static class RandomOwner implements Supplier<OwnerEntity> {
+        @Builder.Default
+        private final String firstName = RandomStringUtils.randomAlphabetic(20);
+        @Builder.Default
+        private final String lastName = RandomStringUtils.randomAlphabetic(20);
+        @Builder.Default
+        private final String address = RandomStringUtils.randomAlphabetic(20);
+        @Builder.Default
+        private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
+
+        @Override
+        public OwnerEntity get() {
+            return new OwnerEntity(firstName, lastName, address, phoneNumber);
+        }
+    }
+
+    @Builder
+    static class RandomVehicle implements Supplier<VehicleEntity> {
+
+        @Builder.Default
+        private String vin = RandomStringUtils.randomAlphabetic(20);
+        @Builder.Default
+        private String licensePlate = RandomStringUtils.randomAlphabetic(20);
+        @Builder.Default
+        private String make = RandomStringUtils.randomAlphabetic(20);
+        @Builder.Default
+        private String model = RandomStringUtils.randomAlphabetic(20);
+        @Builder.Default
+        private int year = Integer.parseInt(RandomStringUtils.randomNumeric(4));
+
+        @Override
+        public VehicleEntity get() {
+            return new VehicleEntity(vin, licensePlate, make, model, year);
+        }
     }
 }
