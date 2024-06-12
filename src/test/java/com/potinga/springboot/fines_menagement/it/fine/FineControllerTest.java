@@ -21,6 +21,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,29 +48,27 @@ class FineControllerTest {
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
-        VehicleEntity vehicleEntityTransient =  RandomVehicle.builder().build().get();
+        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
         vehicleEntityTransient.setOwner(persistedOwnerEntity);
         VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
 
-        CreateFineRequest createFineRequest = new CreateFineRequest();
-        createFineRequest.setAmount(100D);
-        createFineRequest.setViolation("Violation");
-        createFineRequest.setDate("3 Decembrie 2023");
-        createFineRequest.setLocation("Alba Iulia");
-        createFineRequest.setOwnerId(persistedOwnerEntity.getId());
-        createFineRequest.setVehicleId(persistedVehicleEntity.getId());
+        CreateFineRequest createFineRequest = RandomCreateFineRequest.builder()
+                .ownerId(persistedOwnerEntity.getId())
+                .vehicleId(persistedVehicleEntity.getId())
+                .build().get();
 
         //        WHEN
         FineCreatedResponse fineCreatedResponse = fineApiClient.createFine(port, createFineRequest);
 
         //        THEN
-        FineCreatedResponse expectedFineCreatedResponse = new FineCreatedResponse();
-        expectedFineCreatedResponse.setAmount(100D);
-        expectedFineCreatedResponse.setViolation("Violation");
-        expectedFineCreatedResponse.setDate("3 Decembrie 2023");
-        expectedFineCreatedResponse.setLocation("Alba Iulia");
-        expectedFineCreatedResponse.setOwnerId(persistedOwnerEntity.getId());
-        expectedFineCreatedResponse.setVehicleId(persistedVehicleEntity.getId());
+        FineCreatedResponse expectedFineCreatedResponse = FineCreatedResponse.builder()
+                .amount(createFineRequest.getAmount())
+                .violation(createFineRequest.getViolation())
+                .date(createFineRequest.getDate())
+                .location(createFineRequest.getLocation())
+                .ownerId(createFineRequest.getOwnerId())
+                .vehicleId(createFineRequest.getVehicleId())
+                .build();
 
         assertThat(fineCreatedResponse)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
@@ -85,23 +84,15 @@ class FineControllerTest {
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
-        VehicleEntity vehicleEntityTransient  = RandomVehicle.builder().build().get();
+        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
         vehicleEntityTransient.setOwner(persistedOwnerEntity);
         VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
 
-        FineEntity fine1Transient = new FineEntity();
-        fine1Transient.setAmount(100D);
-        fine1Transient.setViolation("Violation");
-        fine1Transient.setDate("3 Decembrie 2023");
-        fine1Transient.setLocation("Alba Iulia");
+        FineEntity fine1Transient = RandomFine.builder().build().get();
         fine1Transient.setOwner(persistedOwnerEntity);
         fine1Transient.setVehicle(persistedVehicleEntity);
 
-        FineEntity fine2Transient = new FineEntity();
-        fine2Transient.setAmount(100D);
-        fine2Transient.setViolation("Violation");
-        fine2Transient.setDate("3 Decembrie 2023");
-        fine2Transient.setLocation("Alba Iulia");
+        FineEntity fine2Transient = RandomFine.builder().build().get();
         fine2Transient.setOwner(persistedOwnerEntity);
         fine2Transient.setVehicle(persistedVehicleEntity);
 
@@ -111,28 +102,31 @@ class FineControllerTest {
         List<AllFineResponse> allFinesResponse = fineApiClient.getAllFines(port);
 
         //        THEN
-        AllFineResponse allFineResponse1 = new AllFineResponse();
-        allFineResponse1.setAmount(100D);
-        allFineResponse1.setViolation("Violation");
-        allFineResponse1.setDate("3 Decembrie 2023");
-        allFineResponse1.setLocation("Alba Iulia");
-        allFineResponse1.setOwnerId(persistedOwnerEntity.getId());
-        allFineResponse1.setVehicleId(persistedVehicleEntity.getId());
-
-        AllFineResponse allFineResponse2 = new AllFineResponse();
-        allFineResponse2.setAmount(100D);
-        allFineResponse2.setViolation("Violation");
-        allFineResponse2.setDate("3 Decembrie 2023");
-        allFineResponse2.setLocation("Alba Iulia");
-        allFineResponse2.setOwnerId(persistedOwnerEntity.getId());
-        allFineResponse2.setVehicleId(persistedVehicleEntity.getId());
-
         allFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
 
         assertThat(allFinesResponse)
                 .hasSize(2)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(List.of(allFineResponse1, allFineResponse2));
+                .containsAll(
+                        List.of(
+                                AllFineResponse.builder()
+                                        .amount(fine1Transient.getAmount())
+                                        .violation(fine1Transient.getViolation())
+                                        .date(fine1Transient.getDate())
+                                        .location(fine1Transient.getLocation())
+                                        .ownerId(persistedOwnerEntity.getId())
+                                        .vehicleId(persistedVehicleEntity.getId())
+                                        .build(),
+                                AllFineResponse.builder()
+                                        .amount(fine2Transient.getAmount())
+                                        .violation(fine2Transient.getViolation())
+                                        .date(fine2Transient.getDate())
+                                        .location(fine2Transient.getLocation())
+                                        .ownerId(persistedOwnerEntity.getId())
+                                        .vehicleId(persistedVehicleEntity.getId())
+                                        .build()
+                        )
+                );
     }
 
     @Test
@@ -146,11 +140,7 @@ class FineControllerTest {
         vehicleEntityTransient.setOwner(persistedOwnerEntity);
         VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
 
-        FineEntity fineTransient = new FineEntity();
-        fineTransient.setAmount(100D);
-        fineTransient.setViolation("Violation");
-        fineTransient.setDate("3 Decembrie 2023");
-        fineTransient.setLocation("Alba Iulia");
+        FineEntity fineTransient = RandomFine.builder().build().get();
         fineTransient.setOwner(persistedOwnerEntity);
         fineTransient.setVehicle(persistedVehicleEntity);
 
@@ -160,13 +150,14 @@ class FineControllerTest {
         FineByIdResponse fineResponse = fineApiClient.getFineById(port, persistedFine.getId());
 
         //        THEN
-        FineByIdResponse expectedFine = new FineByIdResponse();
-        expectedFine.setAmount(100D);
-        expectedFine.setViolation("Violation");
-        expectedFine.setDate("3 Decembrie 2023");
-        expectedFine.setLocation("Alba Iulia");
-        expectedFine.setOwnerId(persistedOwnerEntity.getId());
-        expectedFine.setVehicleId(persistedVehicleEntity.getId());
+        FineByIdResponse expectedFine = FineByIdResponse.builder()
+                .amount(persistedFine.getAmount())
+                .violation(persistedFine.getViolation())
+                .date(persistedFine.getDate())
+                .location(persistedFine.getLocation())
+                .ownerId(persistedOwnerEntity.getId())
+                .vehicleId(persistedVehicleEntity.getId())
+                .build();
 
         assertThat(fineResponse.getId()).isNotNull();
 
@@ -211,6 +202,48 @@ class FineControllerTest {
         @Override
         public VehicleEntity get() {
             return new VehicleEntity(vin, licensePlate, make, model, year);
+        }
+    }
+
+    @Builder
+    static class RandomFine implements Supplier<FineEntity> {
+        private static final Random RANDOM = new Random();
+
+        @Builder.Default
+        private double amount = RANDOM.nextDouble();
+        @Builder.Default
+        private String violation = RandomStringUtils.randomAlphabetic(10);
+        @Builder.Default
+        private String date = RandomStringUtils.randomAlphabetic(10);
+        @Builder.Default
+        private String location = RandomStringUtils.randomAlphabetic(10);
+
+        @Override
+        public FineEntity get() {
+            return new FineEntity(amount, violation, date, location);
+        }
+    }
+
+    @Builder
+    static class RandomCreateFineRequest implements Supplier<CreateFineRequest> {
+        private static final Random RANDOM = new Random();
+
+        @Builder.Default
+        private double amount = RANDOM.nextDouble();
+        @Builder.Default
+        private String violation = RandomStringUtils.randomAlphabetic(10);
+        @Builder.Default
+        private String date = RandomStringUtils.randomAlphabetic(10);
+        @Builder.Default
+        private String location = RandomStringUtils.randomAlphabetic(10);
+        @Builder.Default
+        private Long ownerId = null;
+        @Builder.Default
+        private Long vehicleId = null;
+
+        @Override
+        public CreateFineRequest get() {
+            return new CreateFineRequest(amount, violation, date, location, ownerId, vehicleId);
         }
     }
 }
