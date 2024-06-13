@@ -5,7 +5,7 @@ public class VehicleDeletionException extends EntityDeletionException {
         super(message);
     }
 
-    VehicleDeletionException(String message, Throwable cause) {
+    public VehicleDeletionException(String message, Throwable cause) {
         super(message, cause);
     }
 }

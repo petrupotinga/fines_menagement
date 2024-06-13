@@ -31,7 +31,7 @@ class VehicleRepositoryTest {
     @Test
     @DisplayName("Test vehicle creation fails with duplicate VIN")
     void testUniqueVinConstraint() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerEntityTransient = new OwnerEntity();
         ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
@@ -69,7 +69,7 @@ class VehicleRepositoryTest {
     @Test
     @DisplayName("Test vehicle creation fails with duplicate Licence Plate")
     void testUniqueLicencePlateConstraint() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerEntityTransient = new OwnerEntity();
         ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
@@ -107,7 +107,7 @@ class VehicleRepositoryTest {
     @Test
     @DisplayName("Delete vehicle test")
     void testDeleteVehicle() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerEntityTransient = new OwnerEntity();
         ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));

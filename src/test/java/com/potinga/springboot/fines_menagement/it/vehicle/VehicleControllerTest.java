@@ -57,38 +57,36 @@ class VehicleControllerTest {
         ownerRepository.deleteAll();
         vehicleRepository.deleteAll();
 
+        //  Given
         OwnerEntity ownerTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
 
-        //        GIVEN
         CreateVehicleRequest createVehicleRequest = RandomCreateVehicleRequest.builder()
                 .ownerId(persistedOwner.getId())
                 .build().get();
 
-        //        WHEN
+        // When
         VehicleCreatedResponse vehicleCreatedResponse = vehicleApiClient.createVehicle(port, createVehicleRequest);
 
-        //        THEN
-        VehicleCreatedResponse expectedVehicleCreatedResponse = VehicleCreatedResponse.builder()
-                .vin(createVehicleRequest.getVin())
-                .licensePlate(createVehicleRequest.getLicensePlate())
-                .ownerId(createVehicleRequest.getOwnerId())
-                .make(createVehicleRequest.getMake())
-                .model(createVehicleRequest.getModel())
-                .year(createVehicleRequest.getYear())
-                .build();
-
+        // Then
         assertThat(vehicleCreatedResponse)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
-                .isEqualTo(expectedVehicleCreatedResponse);
+                .isEqualTo(VehicleCreatedResponse.builder()
+                        .vin(createVehicleRequest.getVin())
+                        .licensePlate(createVehicleRequest.getLicensePlate())
+                        .ownerId(createVehicleRequest.getOwnerId())
+                        .make(createVehicleRequest.getMake())
+                        .model(createVehicleRequest.getModel())
+                        .year(createVehicleRequest.getYear())
+                        .build());
     }
 
     @Test
     @DisplayName("Get all vehicles")
     void getAllVehiclesTest() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
 
@@ -100,41 +98,39 @@ class VehicleControllerTest {
 
         vehicleRepository.saveAll(List.of(vehicle1, vehicle2));
 
-        //        GIVEN
-        List<AllVehicleResponse> allVehicleResponses = Stream.of(
-                        AllVehicleResponse.builder()
-                                .vin(vehicle1.getVin())
-                                .licensePlate(vehicle1.getLicensePlate())
-                                .make(vehicle1.getMake())
-                                .model(vehicle1.getModel())
-                                .year(vehicle1.getYear())
-                                .build(),
-                        AllVehicleResponse.builder()
-                                .vin(vehicle2.getVin())
-                                .licensePlate(vehicle2.getLicensePlate())
-                                .make(vehicle2.getMake())
-                                .model(vehicle2.getModel())
-                                .year(vehicle2.getYear())
-                                .build()
-                )
-                .peek(vehicle -> vehicle.setOwnerId(persistedOwner.getId()))
-                .toList();
-
-        //        WHEN
+        // When
         List<AllVehicleResponse> allVehicles = vehicleApiClient.getAllVehicles(port);
 
-        //        THEN
+        // Then
         allVehicles.forEach(vehicle -> assertThat(vehicle.getId()).isNotNull());
 
         assertThat(allVehicles)
                 .hasSize(2)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(allVehicleResponses);
+                .containsAll(Stream.of(
+                                AllVehicleResponse.builder()
+                                        .vin(vehicle1.getVin())
+                                        .licensePlate(vehicle1.getLicensePlate())
+                                        .make(vehicle1.getMake())
+                                        .model(vehicle1.getModel())
+                                        .year(vehicle1.getYear())
+                                        .build(),
+                                AllVehicleResponse.builder()
+                                        .vin(vehicle2.getVin())
+                                        .licensePlate(vehicle2.getLicensePlate())
+                                        .make(vehicle2.getMake())
+                                        .model(vehicle2.getModel())
+                                        .year(vehicle2.getYear())
+                                        .build()
+                        )
+                        .peek(vehicle -> vehicle.setOwnerId(persistedOwner.getId()))
+                        .toList());
     }
 
     @Test
     @DisplayName("Get vehicle by licensePlate")
     void getVehicleByLicensePlateTest() {
+        // Given
         OwnerEntity ownerTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
 
@@ -143,10 +139,10 @@ class VehicleControllerTest {
 
         VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
 
-        //        WHEN
+        // When
         VehicleByLPResponse vehicleResponse = vehicleApiClient.getVehicleByLicensePlate(port, persistedVehicle.getLicensePlate());
 
-        //        THEN
+        // Then
         assertThat(vehicleResponse.getLicensePlate()).isNotNull();
 
         assertThat(vehicleResponse)
@@ -166,7 +162,7 @@ class VehicleControllerTest {
     @Test
     @DisplayName("Get vehicle by id")
     void getVehicleByIdTest() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
 
@@ -175,10 +171,10 @@ class VehicleControllerTest {
 
         VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
 
-        //        WHEN
+        // When
         VehicleByIdResponse vehicleResponse = vehicleApiClient.getVehicleById(port, persistedVehicle.getId());
 
-        //        THEN
+        // Then
         assertThat(vehicleResponse.getId()).isNotNull();
 
         assertThat(vehicleResponse)
@@ -198,7 +194,7 @@ class VehicleControllerTest {
     @Test
     @DisplayName("Update vehicle")
     void updateVehicleTest() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
 
@@ -206,13 +202,14 @@ class VehicleControllerTest {
         vehicleTransient.setOwner(persistedOwner);
         VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
 
-        // Update request
         UpdateVehicleRequest updateVehicleRequest = RandomUpdateVehicleRequest.builder().build().get();
 
         Long vehicleId = persistedVehicle.getId();
 
+        // When
         UpdateVehicleResponse updateVehicleResponse = vehicleApiClient.updateVehicle(port, vehicleId, updateVehicleRequest);
 
+        // Then
         VehicleEntity vehicle = vehicleRepository.findById(vehicleId).orElseThrow();
 
         assertThat(updateVehicleResponse)
@@ -245,28 +242,29 @@ class VehicleControllerTest {
     @Test
     @DisplayName("Transfer Vehicle to Another Owner")
     void transferVehicleToAnotherOwnerTest() {
-        // Setup initial owner and vehicle
-        OwnerEntity originalOwner = new OwnerEntity("John", "Doe", "1234 Elm Street", "5551234567");
-        originalOwner = ownerRepository.save(originalOwner);
-        VehicleEntity vehicle = new VehicleEntity("VIN123456789", "XYZ 987", "Toyota", "Corolla", 2019);
-        vehicle.setOwner(originalOwner);
-        vehicle = vehicleRepository.save(vehicle);
+        // Given
+        OwnerEntity originalOwnerTransient = RandomOwner.builder().build().get();
+        OwnerEntity originalPersistedOwner = ownerRepository.save(originalOwnerTransient);
 
-        // Setup new owner
-        OwnerEntity newOwner = new OwnerEntity("Jane", "Smith", "5678 Maple Street", "5559876543");
-        newOwner = ownerRepository.save(newOwner);
+        VehicleEntity vehicleTransient = RandomVehicle.builder().build().get();
+        vehicleTransient.setOwner(originalPersistedOwner);
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
 
-        // Perform the transfer
-        vehicleApiClient.transferVehicleToAnotherOwner(port, vehicle.getId(), newOwner.getId());
+        OwnerEntity newOwnerTransient = RandomOwner.builder().build().get();
+        OwnerEntity persistedNewOwner = ownerRepository.save(newOwnerTransient);
 
-        // Verify the transfer
-        VehicleEntity updatedVehicle = vehicleRepository.findById(vehicle.getId()).orElseThrow();
-        assertThat(updatedVehicle.getOwner().getId()).isEqualTo(newOwner.getId());
+        // When
+        vehicleApiClient.transferVehicleToAnotherOwner(port, persistedVehicle.getId(), persistedNewOwner.getId());
+
+        // Then
+        VehicleEntity transferredVehicle = vehicleRepository.findById(persistedVehicle.getId()).orElseThrow();
+        assertThat(transferredVehicle.getOwner().getId()).isEqualTo(persistedNewOwner.getId());
     }
 
     @Test
     @DisplayName("Delete vehicle by id")
     void deleteVehicleTest() {
+        //  Given
         OwnerEntity ownerTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
 
@@ -274,8 +272,10 @@ class VehicleControllerTest {
         vehicleTransient.setOwner(persistedOwner);
         VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
 
+        // When
         vehicleApiClient.deleteVehicle(port, persistedVehicle.getId());
 
+        // Then
         boolean vehicleExists = vehicleRepository.existsById(persistedVehicle.getId());
         assertThat(vehicleExists).isFalse();
     }
