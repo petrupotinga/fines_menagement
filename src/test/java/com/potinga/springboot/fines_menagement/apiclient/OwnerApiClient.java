@@ -1,10 +1,7 @@
 package com.potinga.springboot.fines_menagement.apiclient;
 
 import com.potinga.springboot.fines_menagement.common.BaseRestTemplate;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.CreateOwnerRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.owner.OwnerCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.owner.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
@@ -62,6 +59,22 @@ public class OwnerApiClient {
                         .replace("{ID}", id.toString())
                 ).build(),
                 new ParameterizedTypeReference<OwnerByIdResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+    public UpdateOwnerResponse updateOwner(String port, Long id, UpdateOwnerRequest request) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.put(UPDATE_OWNER_BY_ID
+                                .replace("{PORT}", port)
+                                .replace("{ID}", id.toString()))
+                        .contentType(APPLICATION_JSON)
+                        .body(request),
+                new ParameterizedTypeReference<UpdateOwnerResponse>() {
                 }
         );
 
