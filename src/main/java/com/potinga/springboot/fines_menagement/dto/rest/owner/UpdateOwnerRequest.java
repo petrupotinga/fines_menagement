@@ -1,0 +1,15 @@
+package com.potinga.springboot.fines_menagement.dto.rest.owner;
+
+import lombok.*;
+
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class UpdateOwnerRequest {
+    private String firstName;
+    private String lastName;
+    private String address;
+    private String phoneNumber;
+}
