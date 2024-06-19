@@ -83,4 +83,16 @@ public class OwnerApiClient {
 
         return response.getBody();
     }
+    public void deleteOwner(String port, Long id) {
+        String URL = DELETE_OWNER_BY_ID
+                .replace("{PORT}", port)
+                .replace("{ID}", id.toString());
+        var response = baseRestTemplate.exchange(
+                RequestEntity.delete(URL).build(),
+                new ParameterizedTypeReference<Void>() {}
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+    }
 }
