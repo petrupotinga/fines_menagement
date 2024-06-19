@@ -86,20 +86,19 @@ public class VehicleApiClient {
         return response.getBody();
     }
 
-    public UpdateVehicleResponse updateVehicle(String port, Long id, UpdateVehicleRequest updateRequest) {
+    public void updateVehicle(String port, Long id, UpdateVehicleRequest updateRequest) {
         var response = baseRestTemplate.exchange(
                 RequestEntity.put(UPDATE_VEHICLE_BY_ID
                                 .replace("{PORT}", port)
                                 .replace("{ID}", id.toString())
                         ).contentType(APPLICATION_JSON)
                         .body(updateRequest),
-                new ParameterizedTypeReference<UpdateVehicleResponse>() {}
+                new ParameterizedTypeReference<UpdateVehicleResponse>() {
+                }
         );
 
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-
-        return response.getBody();
     }
 
     public void transferVehicleToAnotherOwner(String port, Long vehicleId, Long newOwnerId) {
