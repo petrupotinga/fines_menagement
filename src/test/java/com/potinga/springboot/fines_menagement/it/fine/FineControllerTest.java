@@ -2,10 +2,7 @@ package com.potinga.springboot.fines_menagement.it.fine;
 
 import com.potinga.springboot.fines_menagement.apiclient.FineApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.*;
 import com.potinga.springboot.fines_menagement.entity.FineEntity;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
@@ -200,5 +197,55 @@ class FineControllerTest {
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
                 .isEqualTo(expectedFine);
+    }
+
+    @Test
+    @DisplayName("Update fine")
+    void updateFineTest() {
+
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity owner = ownerRepository.save(ownerEntity);
+
+        VehicleEntity vehicle = new VehicleEntity();
+        vehicle.setMake(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setModel(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setVin(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setYear(Integer.parseInt(RandomStringUtils.randomNumeric(4)));
+        vehicle.setLicensePlate(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setOwner(owner);
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicle);
+
+        FineEntity fine = new FineEntity();
+        fine.setAmount(100D);
+        fine.setViolation("Violation");
+        fine.setDate("3 Decembrie 2023");
+        fine.setLocation("Alba Iulia");
+        fine.setOwner(owner);
+        fine.setVehicle(persistedVehicle);
+
+        FineEntity persistedFine = fineRepository.save(fine);
+
+        UpdateFineRequest updateRequest = new UpdateFineRequest();
+        updateRequest.setAmount(1000D);
+        updateRequest.setViolation("Violation");
+        updateRequest.setDate("5 Ianuarie 2024");
+        updateRequest.setLocation("Florarii");
+
+        Long fineId = persistedFine.getId();
+
+        fineApiClient.updateFine(port, fineId, updateRequest);
+
+        // Fetch the updated vehicle
+        FineByIdResponse updatedfine = fineApiClient.getFineById(port, fineId);
+
+        // Assertions to verify the update
+        assertThat(updatedfine.getAmount()).isEqualTo(1000D);
+        assertThat(updatedfine.getViolation()).isEqualTo("Violation");
+        assertThat(updatedfine.getDate()).isEqualTo("5 Ianuarie 2024");
+        assertThat(updatedfine.getLocation()).isEqualTo("Florarii");
     }
 }
