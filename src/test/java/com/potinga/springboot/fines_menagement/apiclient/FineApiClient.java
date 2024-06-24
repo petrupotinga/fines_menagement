@@ -1,10 +1,7 @@
 package com.potinga.springboot.fines_menagement.apiclient;
 
 import com.potinga.springboot.fines_menagement.common.BaseRestTemplate;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
@@ -68,5 +65,20 @@ public class FineApiClient {
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
 
         return response.getBody();
+    }
+
+    public void updateFine(String port, Long id, UpdateFineRequest updateRequest) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.put(UPDATE_FINE_BY_ID
+                                .replace("{PORT}", port)
+                                .replace("{ID}", id.toString())
+                        ).contentType(APPLICATION_JSON)
+                        .body(updateRequest),
+                new ParameterizedTypeReference<UpdateFineResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
     }
 }
