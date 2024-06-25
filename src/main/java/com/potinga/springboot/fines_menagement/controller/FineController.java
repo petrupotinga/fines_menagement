@@ -1,9 +1,6 @@
 package com.potinga.springboot.fines_menagement.controller;
 
-import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.*;
 import com.potinga.springboot.fines_menagement.service.FineService;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,5 +28,10 @@ public class FineController {
     @GetMapping
     public List<AllFineResponse> getAllFines() {
         return fineService.getAllFines();
+    }
+
+    @PutMapping("/{id}")
+    public UpdateFineResponse updateFine(@PathVariable Long id, @RequestBody UpdateFineRequest updateRequest) {
+        return fineService.updateFine(id, updateRequest);
     }
 }
