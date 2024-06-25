@@ -1,9 +1,6 @@
 package com.potinga.springboot.fines_menagement.service;
 
-import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.fine.*;
 import com.potinga.springboot.fines_menagement.entity.FineEntity;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
@@ -87,5 +84,27 @@ public class FineService {
             response.setVehicleId(fine.getVehicle().getId());
             return response;
         }).collect(Collectors.toList());
+    }
+    public UpdateFineResponse updateFine(Long fineId, UpdateFineRequest updateRequest) {
+        Optional<FineEntity> optionalFine = fineRepository.findById(fineId);
+        if (optionalFine.isPresent()) {
+            FineEntity fine = optionalFine.get();
+            fine.setAmount(updateRequest.getAmount());
+            fine.setViolation(updateRequest.getViolation());
+            fine.setDate(updateRequest.getDate());
+            fine.setLocation(updateRequest.getLocation());
+
+            fineRepository.save(fine);
+
+            UpdateFineResponse response = new UpdateFineResponse();
+            response.setAmount(fine.getAmount());
+            response.setViolation(fine.getViolation());
+            response.setDate(fine.getDate());
+            response.setLocation(fine.getLocation());
+
+            return response;
+        } else {
+            throw new RuntimeException("Fine with ID " + fineId + " not found");
+        }
     }
 }
