@@ -248,4 +248,39 @@ class FineControllerTest {
         assertThat(updatedfine.getDate()).isEqualTo("5 Ianuarie 2024");
         assertThat(updatedfine.getLocation()).isEqualTo("Florarii");
     }
+    @Test
+    @DisplayName("Delete fine by id")
+    void deleteFineTest() {
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
+        OwnerEntity owner = ownerRepository.save(ownerEntity);
+
+        VehicleEntity vehicle = new VehicleEntity();
+        vehicle.setMake(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setModel(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setVin(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setYear(Integer.parseInt(RandomStringUtils.randomNumeric(4)));
+        vehicle.setLicensePlate(RandomStringUtils.randomAlphabetic(10));
+        vehicle.setOwner(owner);
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicle);
+
+        FineEntity fine = new FineEntity();
+        fine.setAmount(100D);
+        fine.setViolation("Violation");
+        fine.setDate("3 Decembrie 2023");
+        fine.setLocation("Alba Iulia");
+        fine.setOwner(owner);
+        fine.setVehicle(persistedVehicle);
+
+        FineEntity persistedFine = fineRepository.save(fine);
+        // Perform the deletion
+        fineApiClient.deleteFine(port, persistedFine.getId());
+
+        // Verify the vehicle is deleted
+        boolean fineExists = fineRepository.existsById(persistedFine.getId());
+        assertThat(fineExists).isFalse();
+    }
 }
