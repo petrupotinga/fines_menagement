@@ -81,4 +81,17 @@ public class FineApiClient {
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
     }
+
+    public void deleteFine(String port, Long id) {
+        String URL = DELETE_FINE_BY_ID
+                .replace("{PORT}", port)
+                .replace("{ID}", id.toString());
+        var response = baseRestTemplate.exchange(
+                RequestEntity.delete(URL).build(),
+                new ParameterizedTypeReference<Void>() {
+                }
+        );
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+    }
 }
