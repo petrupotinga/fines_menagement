@@ -107,4 +107,10 @@ public class FineService {
             throw new RuntimeException("Fine with ID " + fineId + " not found");
         }
     }
+    public void deleteFine(Long fineId){
+        FineEntity fine = fineRepository.findById(fineId)
+                .orElseThrow(() -> new RuntimeException("Fine not found with id: " + fineId));
+
+        fineRepository.delete(fine);
+    }
 }
