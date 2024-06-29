@@ -34,4 +34,8 @@ public class FineController {
     public UpdateFineResponse updateFine(@PathVariable Long id, @RequestBody UpdateFineRequest updateRequest) {
         return fineService.updateFine(id, updateRequest);
     }
+    @DeleteMapping("/{id}")
+    public void deleteFine(@PathVariable Long id) {
+        fineService.deleteFine(id);
+    }
 }
