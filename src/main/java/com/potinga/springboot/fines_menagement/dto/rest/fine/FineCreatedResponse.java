@@ -1,9 +1,11 @@
 package com.potinga.springboot.fines_menagement.dto.rest.fine;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
 @NoArgsConstructor
 @Getter
 @Setter
