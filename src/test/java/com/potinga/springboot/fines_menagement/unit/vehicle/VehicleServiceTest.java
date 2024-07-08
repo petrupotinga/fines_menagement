@@ -1,5 +1,8 @@
 package com.potinga.springboot.fines_menagement.unit.vehicle;
 
+import com.potinga.springboot.fines_menagement.common.random.fine.RandomFine;
+import com.potinga.springboot.fines_menagement.common.random.vehicle.RandomCreateVehicleRequest;
+import com.potinga.springboot.fines_menagement.common.random.vehicle.RandomVehicle;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
 import com.potinga.springboot.fines_menagement.entity.FineEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
@@ -16,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,19 +41,13 @@ class VehicleServiceTest {
     @Test
     @DisplayName("Test vehicle creation fails with duplicate VIN")
     void testCreateVehicleWithDuplicateVin() {
-        CreateVehicleRequest request = new CreateVehicleRequest();
-        request.setVin("VIN123456");
-        request.setMake("Toyota");
-        request.setModel("Camry");
-        request.setYear(2020);
-        request.setLicensePlate("ABC123");
-        request.setOwnerId(1L);
+        // Given
+        CreateVehicleRequest request = RandomCreateVehicleRequest.builder().build().get();
 
-        VehicleEntity existingVehicle = new VehicleEntity();
-        existingVehicle.setVin(request.getVin());
+        when(vehicleRepository.findByVin(request.getVin())).thenReturn(Optional.of(new VehicleEntity()));
 
-        when(vehicleRepository.findByVin(request.getVin())).thenReturn(Optional.of(existingVehicle));
-
+        // When
+        // Then
         DuplicateRecordException thrown = assertThrows(DuplicateRecordException.class, () -> {
             vehicleService.createVehicle(request);
         });
@@ -61,19 +60,14 @@ class VehicleServiceTest {
     @Test
     @DisplayName("Test vehicle creation fails with duplicate Licence Plate")
     void testCreateVehicleWithDuplicateLicencePlate() {
-        CreateVehicleRequest request = new CreateVehicleRequest();
-        request.setVin("VIN123456");
-        request.setMake("Toyota");
-        request.setModel("Camry");
-        request.setYear(2020);
-        request.setLicensePlate("ABC123");
-        request.setOwnerId(1L);
-
-        VehicleEntity existingVehicle = new VehicleEntity();
-        existingVehicle.setLicensePlate(request.getLicensePlate());
+        // Given
+        CreateVehicleRequest request = RandomCreateVehicleRequest.builder().build().get();
+        VehicleEntity existingVehicle = RandomVehicle.builder().build().get();
 
         when(vehicleRepository.findByLicensePlate(request.getLicensePlate())).thenReturn(Optional.of(existingVehicle));
 
+        // When
+        // Then
         DuplicateRecordException thrown = assertThrows(DuplicateRecordException.class, () -> {
             vehicleService.createVehicle(request);
         });
@@ -86,11 +80,17 @@ class VehicleServiceTest {
     @Test
     @DisplayName("Test when a vehicle has fines, it cannot be deleted")
     void testDeleteVehicleHavingFines() {
+        // Given
         long vehicleId = 1L;
-        // Simulate a vehicle with fines
-        when(fineRepository.findByVehicleId(vehicleId)).thenReturn(List.of(new FineEntity())); // simulate 1 fine
+        when(fineRepository.findByVehicleId(vehicleId)).thenReturn(
+                List.of(
+                        RandomFine.builder().build().get(),
+                        RandomFine.builder().build().get()
+                )
+        );
 
-        // Verify that the vehicle is not deleted
+        // When
+        // Then
         VehicleDeletionException thrown = assertThrows(VehicleDeletionException.class, () -> {
             vehicleService.deleteVehicle(vehicleId);
         });
@@ -103,14 +103,16 @@ class VehicleServiceTest {
     @Test
     @DisplayName("Test when a vehicle has 0 fines, it can be deleted successfully")
     void testDeleteVehicleNotHavingFines() {
+        // Given
         long vehicleId = 1L;
-        // Simulate a vehicle without fines
-        when(fineRepository.findByVehicleId(vehicleId)).thenReturn(List.of()); // simulate 0 fines
+        when(fineRepository.findByVehicleId(vehicleId)).thenReturn(
+                Collections.emptyList()
+        );
 
-        // Try to delete the vehicle
+        // When
         vehicleService.deleteVehicle(vehicleId);
 
-        // Verify that the vehicle delete method was called
+        // Then
         verify(fineRepository, times(1)).findByVehicleId(vehicleId);
         verify(vehicleRepository, times(1)).deleteById(vehicleId);
     }
