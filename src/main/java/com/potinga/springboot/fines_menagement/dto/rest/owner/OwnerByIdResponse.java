@@ -1,9 +1,11 @@
 package com.potinga.springboot.fines_menagement.dto.rest.owner;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
