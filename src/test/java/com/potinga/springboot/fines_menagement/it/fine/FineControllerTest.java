@@ -49,7 +49,7 @@ class FineControllerTest {
     @Test
     @DisplayName("Create a new fine")
     void createFineTest() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
@@ -62,30 +62,32 @@ class FineControllerTest {
                 .vehicleId(persistedVehicleEntity.getId())
                 .build().get();
 
-        //        WHEN
+        // When
         FineCreatedResponse fineCreatedResponse = fineApiClient.createFine(port, createFineRequest);
 
-        //        THEN
-        FineCreatedResponse expectedFineCreatedResponse = FineCreatedResponse.builder()
-                .amount(createFineRequest.getAmount())
-                .violation(createFineRequest.getViolation())
-                .date(createFineRequest.getDate())
-                .location(createFineRequest.getLocation())
-                .ownerId(createFineRequest.getOwnerId())
-                .vehicleId(createFineRequest.getVehicleId())
-                .build();
-
+        // Then
         assertThat(fineCreatedResponse)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
-                .isEqualTo(expectedFineCreatedResponse);
+                .isEqualTo(
+                        FineCreatedResponse.builder()
+                                .amount(createFineRequest.getAmount())
+                                .violation(createFineRequest.getViolation())
+                                .date(createFineRequest.getDate())
+                                .location(createFineRequest.getLocation())
+                                .ownerId(createFineRequest.getOwnerId())
+                                .vehicleId(createFineRequest.getVehicleId())
+                                .build()
+                );
     }
 
     @Test
     @DisplayName("Get all fines")
     void getAllFinesTest() {
-        //        GIVEN
+        fineRepository.deleteAll();
+
+        //  Given
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
@@ -103,10 +105,10 @@ class FineControllerTest {
 
         fineRepository.saveAll(List.of(fine1Transient, fine2Transient));
 
-        //        WHEN
+        // When
         List<AllFineResponse> allFinesResponse = fineApiClient.getAllFines(port);
 
-        //        THEN
+        // Then
         allFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
 
         assertThat(allFinesResponse)
@@ -137,7 +139,7 @@ class FineControllerTest {
     @Test
     @DisplayName("Get all fines by vehicle vin")
     void getAllVehicleFinesByVinTest() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
@@ -163,10 +165,10 @@ class FineControllerTest {
 
         fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
 
-        //        WHEN
+        // When
         List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByVin(port, persistedVehicleEntity.getVin());
 
-        //        THEN
+        // Then
         allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
 
         assertThat(allVehicleFinesResponse)
@@ -197,7 +199,7 @@ class FineControllerTest {
     @Test
     @DisplayName("Get all fines by vehicle licensePlate")
     void getAllVehicleFinesByLicensePlateTest() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
@@ -223,10 +225,10 @@ class FineControllerTest {
 
         fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
 
-        //        WHEN
+        // When
         List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByLicensePlate(port, persistedVehicleEntity.getLicensePlate());
 
-        //        THEN
+        // Then
         allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
 
         assertThat(allVehicleFinesResponse)
@@ -257,7 +259,7 @@ class FineControllerTest {
     @Test
     @DisplayName("Get fine by id")
     void getFineByIdTest() {
-        //        GIVEN
+        //  Given
         OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
@@ -271,10 +273,10 @@ class FineControllerTest {
 
         FineEntity persistedFine = fineRepository.save(fineTransient);
 
-        //        WHEN
+        // When
         FineByIdResponse fineResponse = fineApiClient.getFineById(port, persistedFine.getId());
 
-        //        THEN
+        // Then
         FineByIdResponse expectedFine = FineByIdResponse.builder()
                 .amount(persistedFine.getAmount())
                 .violation(persistedFine.getViolation())
