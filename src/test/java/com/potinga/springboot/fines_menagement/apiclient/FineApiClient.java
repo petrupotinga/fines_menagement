@@ -84,7 +84,6 @@ public class FineApiClient {
 
         return response.getBody();
     }
-
     public List<AllFineResponse> getAllVehicleFinesByLicensePlate(String port, String licensePlate) {
         var response = baseRestTemplate.exchange(
                 RequestEntity.get(GET_VEHICLE_FINES_BY_LICENSE_PLATE
