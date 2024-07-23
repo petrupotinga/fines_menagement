@@ -99,7 +99,6 @@ public class FineApiClient {
 
         return response.getBody();
     }
-
     public void updateFine(String port, Long id, UpdateFineRequest updateRequest) {
         var response = baseRestTemplate.exchange(
                 RequestEntity.put(UPDATE_FINE_BY_ID

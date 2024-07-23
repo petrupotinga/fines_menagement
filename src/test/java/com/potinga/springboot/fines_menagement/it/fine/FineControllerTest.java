@@ -2,32 +2,25 @@ package com.potinga.springboot.fines_menagement.it.fine;
 
 import com.potinga.springboot.fines_menagement.apiclient.FineApiClient;
 import com.potinga.springboot.fines_menagement.common.PostgresIntegrationTest;
+import com.potinga.springboot.fines_menagement.common.random.fine.RandomCreateFineRequest;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.*;
-import com.potinga.springboot.fines_menagement.common.random.fine.RandomCreateFineRequest;
-import com.potinga.springboot.fines_menagement.common.random.fine.RandomFine;
-import com.potinga.springboot.fines_menagement.common.random.owner.RandomOwner;
-import com.potinga.springboot.fines_menagement.common.random.vehicle.RandomVehicle;
-import com.potinga.springboot.fines_menagement.common.random.fine.RandomCreateFineRequest;
-import com.potinga.springboot.fines_menagement.common.random.fine.RandomFine;
-import com.potinga.springboot.fines_menagement.common.random.owner.RandomOwner;
-import com.potinga.springboot.fines_menagement.common.random.vehicle.RandomVehicle;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.CreateFineRequest;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineByIdResponse;
-import com.potinga.springboot.fines_menagement.dto.rest.fine.FineCreatedResponse;
 import com.potinga.springboot.fines_menagement.entity.FineEntity;
 import com.potinga.springboot.fines_menagement.entity.OwnerEntity;
 import com.potinga.springboot.fines_menagement.entity.VehicleEntity;
 import com.potinga.springboot.fines_menagement.repository.FineRepository;
 import com.potinga.springboot.fines_menagement.repository.OwnerRepository;
 import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
+import lombok.Builder;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
+import java.util.Random;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -112,426 +105,6 @@ class FineControllerTest {
         allFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
 
         assertThat(allFinesResponse)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(
-                        List.of(
-                                AllFineResponse.builder()
-                                        .amount(fine1Transient.getAmount())
-                                        .violation(fine1Transient.getViolation())
-                                        .date(fine1Transient.getDate())
-                                        .location(fine1Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build(),
-                                AllFineResponse.builder()
-                                        .amount(fine2Transient.getAmount())
-                                        .violation(fine2Transient.getViolation())
-                                        .date(fine2Transient.getDate())
-                                        .location(fine2Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build()
-                        )
-                );
-    }
-
-    @Test
-    @DisplayName("Get all fines by vehicle vin")
-    void getAllVehicleFinesByVinTest() {
-        //  Given
-        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
-        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
-
-        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
-        vehicleEntityTransient.setOwner(persistedOwnerEntity);
-        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
-
-        FineEntity fine1Transient = RandomFine.builder().build().get();
-        fine1Transient.setOwner(persistedOwnerEntity);
-        fine1Transient.setVehicle(persistedVehicleEntity);
-
-        FineEntity fine2Transient = RandomFine.builder().build().get();
-        fine2Transient.setOwner(persistedOwnerEntity);
-        fine2Transient.setVehicle(persistedVehicleEntity);
-
-        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
-        unrelatedVehicle.setOwner(persistedOwnerEntity);
-        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
-
-        FineEntity unrelatedFine = RandomFine.builder().build().get();
-        unrelatedFine.setOwner(persistedOwnerEntity);
-        unrelatedFine.setVehicle(savedUnrelatedVehicle);
-
-        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
-
-        // When
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByVin(port, persistedVehicleEntity.getVin());
-
-        // Then
-        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
-
-        assertThat(allVehicleFinesResponse)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(
-                        List.of(
-                                AllFineResponse.builder()
-                                        .amount(fine1Transient.getAmount())
-                                        .violation(fine1Transient.getViolation())
-                                        .date(fine1Transient.getDate())
-                                        .location(fine1Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build(),
-                                AllFineResponse.builder()
-                                        .amount(fine2Transient.getAmount())
-                                        .violation(fine2Transient.getViolation())
-                                        .date(fine2Transient.getDate())
-                                        .location(fine2Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build()
-                        )
-                );
-    }
-
-    @Test
-    @DisplayName("Get all fines by vehicle licensePlate")
-    void getAllVehicleFinesByLicensePlateTest() {
-        //  Given
-        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
-        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
-
-        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
-        vehicleEntityTransient.setOwner(persistedOwnerEntity);
-        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
-
-        FineEntity fine1Transient = RandomFine.builder().build().get();
-        fine1Transient.setOwner(persistedOwnerEntity);
-        fine1Transient.setVehicle(persistedVehicleEntity);
-
-        FineEntity fine2Transient = RandomFine.builder().build().get();
-        fine2Transient.setOwner(persistedOwnerEntity);
-        fine2Transient.setVehicle(persistedVehicleEntity);
-
-        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
-        unrelatedVehicle.setOwner(persistedOwnerEntity);
-        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
-
-        FineEntity unrelatedFine = RandomFine.builder().build().get();
-        unrelatedFine.setOwner(persistedOwnerEntity);
-        unrelatedFine.setVehicle(savedUnrelatedVehicle);
-
-        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
-
-        // When
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByLicensePlate(port, persistedVehicleEntity.getLicensePlate());
-
-        // Then
-        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
-
-        assertThat(allVehicleFinesResponse)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(
-                        List.of(
-                                AllFineResponse.builder()
-                                        .amount(fine1Transient.getAmount())
-                                        .violation(fine1Transient.getViolation())
-                                        .date(fine1Transient.getDate())
-                                        .location(fine1Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build(),
-                                AllFineResponse.builder()
-                                        .amount(fine2Transient.getAmount())
-                                        .violation(fine2Transient.getViolation())
-                                        .date(fine2Transient.getDate())
-                                        .location(fine2Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build()
-                        )
-                );
-    }
-
-    @Test
-    @DisplayName("Get all fines by vehicle vin")
-    void getAllVehicleFinesByVinTest() {
-        //        GIVEN
-        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
-        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
-
-        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
-        vehicleEntityTransient.setOwner(persistedOwnerEntity);
-        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
-
-        FineEntity fine1Transient = RandomFine.builder().build().get();
-        fine1Transient.setOwner(persistedOwnerEntity);
-        fine1Transient.setVehicle(persistedVehicleEntity);
-
-        FineEntity fine2Transient = RandomFine.builder().build().get();
-        fine2Transient.setOwner(persistedOwnerEntity);
-        fine2Transient.setVehicle(persistedVehicleEntity);
-
-        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
-        unrelatedVehicle.setOwner(persistedOwnerEntity);
-        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
-
-        FineEntity unrelatedFine = RandomFine.builder().build().get();
-        unrelatedFine.setOwner(persistedOwnerEntity);
-        unrelatedFine.setVehicle(savedUnrelatedVehicle);
-
-        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
-
-        //        WHEN
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByVin(port, persistedVehicleEntity.getVin());
-
-        //        THEN
-        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
-
-        assertThat(allVehicleFinesResponse)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(
-                        List.of(
-                                AllFineResponse.builder()
-                                        .amount(fine1Transient.getAmount())
-                                        .violation(fine1Transient.getViolation())
-                                        .date(fine1Transient.getDate())
-                                        .location(fine1Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build(),
-                                AllFineResponse.builder()
-                                        .amount(fine2Transient.getAmount())
-                                        .violation(fine2Transient.getViolation())
-                                        .date(fine2Transient.getDate())
-                                        .location(fine2Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build()
-                        )
-                );
-    }
-
-    @Test
-    @DisplayName("Get all fines by vehicle licensePlate")
-    void getAllVehicleFinesByLicensePlateTest() {
-        //        GIVEN
-        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
-        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
-
-        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
-        vehicleEntityTransient.setOwner(persistedOwnerEntity);
-        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
-
-        FineEntity fine1Transient = RandomFine.builder().build().get();
-        fine1Transient.setOwner(persistedOwnerEntity);
-        fine1Transient.setVehicle(persistedVehicleEntity);
-
-        FineEntity fine2Transient = RandomFine.builder().build().get();
-        fine2Transient.setOwner(persistedOwnerEntity);
-        fine2Transient.setVehicle(persistedVehicleEntity);
-
-        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
-        unrelatedVehicle.setOwner(persistedOwnerEntity);
-        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
-
-        FineEntity unrelatedFine = RandomFine.builder().build().get();
-        unrelatedFine.setOwner(persistedOwnerEntity);
-        unrelatedFine.setVehicle(savedUnrelatedVehicle);
-
-        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
-
-        //        WHEN
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByLicensePlate(port, persistedVehicleEntity.getLicensePlate());
-
-        //        THEN
-        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
-
-        assertThat(allVehicleFinesResponse)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(
-                        List.of(
-                                AllFineResponse.builder()
-                                        .amount(fine1Transient.getAmount())
-                                        .violation(fine1Transient.getViolation())
-                                        .date(fine1Transient.getDate())
-                                        .location(fine1Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build(),
-                                AllFineResponse.builder()
-                                        .amount(fine2Transient.getAmount())
-                                        .violation(fine2Transient.getViolation())
-                                        .date(fine2Transient.getDate())
-                                        .location(fine2Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build()
-                        )
-                );
-    }
-
-    @Test
-    @DisplayName("Get all fines by vehicle vin")
-    void getAllVehicleFinesByVinTest() {
-        //        GIVEN
-        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
-        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
-
-        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
-        vehicleEntityTransient.setOwner(persistedOwnerEntity);
-        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
-
-        FineEntity fine1Transient = RandomFine.builder().build().get();
-        fine1Transient.setOwner(persistedOwnerEntity);
-        fine1Transient.setVehicle(persistedVehicleEntity);
-
-        FineEntity fine2Transient = RandomFine.builder().build().get();
-        fine2Transient.setOwner(persistedOwnerEntity);
-        fine2Transient.setVehicle(persistedVehicleEntity);
-
-        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
-        unrelatedVehicle.setOwner(persistedOwnerEntity);
-        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
-
-        FineEntity unrelatedFine = RandomFine.builder().build().get();
-        unrelatedFine.setOwner(persistedOwnerEntity);
-        unrelatedFine.setVehicle(savedUnrelatedVehicle);
-
-        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
-
-        //        WHEN
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByVin(port, persistedVehicleEntity.getVin());
-
-        //        THEN
-        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
-
-        assertThat(allVehicleFinesResponse)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(
-                        List.of(
-                                AllFineResponse.builder()
-                                        .amount(fine1Transient.getAmount())
-                                        .violation(fine1Transient.getViolation())
-                                        .date(fine1Transient.getDate())
-                                        .location(fine1Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build(),
-                                AllFineResponse.builder()
-                                        .amount(fine2Transient.getAmount())
-                                        .violation(fine2Transient.getViolation())
-                                        .date(fine2Transient.getDate())
-                                        .location(fine2Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build()
-                        )
-                );
-    }
-
-    @Test
-    @DisplayName("Get all fines by vehicle licensePlate")
-    void getAllVehicleFinesByLicensePlateTest() {
-        //        GIVEN
-        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
-        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
-
-        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
-        vehicleEntityTransient.setOwner(persistedOwnerEntity);
-        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
-
-        FineEntity fine1Transient = RandomFine.builder().build().get();
-        fine1Transient.setOwner(persistedOwnerEntity);
-        fine1Transient.setVehicle(persistedVehicleEntity);
-
-        FineEntity fine2Transient = RandomFine.builder().build().get();
-        fine2Transient.setOwner(persistedOwnerEntity);
-        fine2Transient.setVehicle(persistedVehicleEntity);
-
-        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
-        unrelatedVehicle.setOwner(persistedOwnerEntity);
-        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
-
-        FineEntity unrelatedFine = RandomFine.builder().build().get();
-        unrelatedFine.setOwner(persistedOwnerEntity);
-        unrelatedFine.setVehicle(savedUnrelatedVehicle);
-
-        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
-
-        //        WHEN
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByLicensePlate(port, persistedVehicleEntity.getLicensePlate());
-
-        //        THEN
-        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
-
-        assertThat(allVehicleFinesResponse)
-                .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
-                .containsAll(
-                        List.of(
-                                AllFineResponse.builder()
-                                        .amount(fine1Transient.getAmount())
-                                        .violation(fine1Transient.getViolation())
-                                        .date(fine1Transient.getDate())
-                                        .location(fine1Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build(),
-                                AllFineResponse.builder()
-                                        .amount(fine2Transient.getAmount())
-                                        .violation(fine2Transient.getViolation())
-                                        .date(fine2Transient.getDate())
-                                        .location(fine2Transient.getLocation())
-                                        .ownerId(persistedOwnerEntity.getId())
-                                        .vehicleId(persistedVehicleEntity.getId())
-                                        .build()
-                        )
-                );
-    }
-
-    @Test
-    @DisplayName("Get all fines by vehicle vin")
-    void getAllVehicleFinesByVinTest() {
-        //        GIVEN
-        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
-        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
-
-        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
-        vehicleEntityTransient.setOwner(persistedOwnerEntity);
-        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
-
-        FineEntity fine1Transient = RandomFine.builder().build().get();
-        fine1Transient.setOwner(persistedOwnerEntity);
-        fine1Transient.setVehicle(persistedVehicleEntity);
-
-        FineEntity fine2Transient = RandomFine.builder().build().get();
-        fine2Transient.setOwner(persistedOwnerEntity);
-        fine2Transient.setVehicle(persistedVehicleEntity);
-
-        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
-        unrelatedVehicle.setOwner(persistedOwnerEntity);
-        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
-
-        FineEntity unrelatedFine = RandomFine.builder().build().get();
-        unrelatedFine.setOwner(persistedOwnerEntity);
-        unrelatedFine.setVehicle(savedUnrelatedVehicle);
-
-        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
-
-        //        WHEN
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByVin(port, persistedVehicleEntity.getVin());
-
-        //        THEN
-        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
-
-        assertThat(allVehicleFinesResponse)
                 .hasSize(2)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
                 .containsAll(
@@ -654,12 +227,10 @@ class FineControllerTest {
                         .build())
                 .isEqualTo(expectedFine);
     }
-}
 
     @Test
     @DisplayName("Update fine")
     void updateFineTest() {
-
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
@@ -705,6 +276,7 @@ class FineControllerTest {
         assertThat(updatedfine.getDate()).isEqualTo("5 Ianuarie 2024");
         assertThat(updatedfine.getLocation()).isEqualTo("Florarii");
     }
+
     @Test
     @DisplayName("Delete fine by id")
     void deleteFineTest() {
@@ -740,61 +312,62 @@ class FineControllerTest {
         boolean fineExists = fineRepository.existsById(persistedFine.getId());
         assertThat(fineExists).isFalse();
     }
+}
 
-    @Builder
-    static class RandomOwner implements Supplier<OwnerEntity> {
-        @Builder.Default
-        private final String firstName = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private final String lastName = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private final String address = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
+@Builder
+class RandomOwner implements Supplier<OwnerEntity> {
+    @Builder.Default
+    private final String firstName = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
+    private final String lastName = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
+    private final String address = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
+    private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
 
-        @Override
+    @Override
         public OwnerEntity get() {
             return new OwnerEntity(firstName, lastName, address, phoneNumber);
         }
     }
 
-    @Builder
-    static class RandomVehicle implements Supplier<VehicleEntity> {
+@Builder
+class RandomVehicle implements Supplier<VehicleEntity> {
 
-        @Builder.Default
-        private String vin = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private String licensePlate = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private String make = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private String model = RandomStringUtils.randomAlphabetic(20);
-        @Builder.Default
-        private int year = Integer.parseInt(RandomStringUtils.randomNumeric(4));
+    @Builder.Default
+    private String vin = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
+    private String licensePlate = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
+    private String make = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
+    private String model = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
+    private int year = Integer.parseInt(RandomStringUtils.randomNumeric(4));
 
-        @Override
-        public VehicleEntity get() {
-            return new VehicleEntity(vin, licensePlate, make, model, year);
-        }
+    @Override
+    public VehicleEntity get() {
+        return new VehicleEntity(vin, licensePlate, make, model, year);
     }
+}
 
-    @Builder
-    static class RandomFine implements Supplier<FineEntity> {
-        private static final Random RANDOM = new Random();
+@Builder
+class RandomFine implements Supplier<FineEntity> {
+    private static final Random RANDOM = new Random();
 
-        @Builder.Default
-        private double amount = RANDOM.nextDouble();
-        @Builder.Default
-        private String violation = RandomStringUtils.randomAlphabetic(10);
-        @Builder.Default
-        private String date = RandomStringUtils.randomAlphabetic(10);
-        @Builder.Default
-        private String location = RandomStringUtils.randomAlphabetic(10);
+    @Builder.Default
+    private double amount = RANDOM.nextDouble();
+    @Builder.Default
+    private String violation = RandomStringUtils.randomAlphabetic(10);
+    @Builder.Default
+    private String date = RandomStringUtils.randomAlphabetic(10);
+    @Builder.Default
+    private String location = RandomStringUtils.randomAlphabetic(10);
 
         @Override
         public FineEntity get() {
             return new FineEntity(amount, violation, date, location);
         }
     }
-}
+
 
