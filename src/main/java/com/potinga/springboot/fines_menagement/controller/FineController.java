@@ -30,6 +30,11 @@ public class FineController {
         return fineService.getFineByLicensePlate(licensePlate);
     }
 
+    @GetMapping("/vehicle/{licensePlate}")
+    public List<AllFineResponse> getAllVehicleFinesByLicensePlate(@PathVariable String licensePlate) {
+        return fineService.getAllVehicleFinesByLicensePlate(licensePlate);
+    }
+
     @GetMapping
     public List<AllFineResponse> getAllFines() {
         return fineService.getAllFines();
