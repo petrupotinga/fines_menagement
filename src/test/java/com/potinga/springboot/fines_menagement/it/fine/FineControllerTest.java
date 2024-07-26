@@ -159,7 +159,7 @@ class FineControllerTest {
         fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
 
         //        WHEN
-        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByLicensePlate(port, persistedVehicleEntity.getLicensePlate());
+       List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByLicensePlate(port, persistedVehicleEntity.getLicensePlate());
 
         //        THEN
         allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());

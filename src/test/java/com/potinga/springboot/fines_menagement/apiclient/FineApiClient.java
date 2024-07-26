@@ -18,7 +18,7 @@ public class FineApiClient {
     private static final String GET_ALL_FINES = "http://localhost:{PORT}/api/v1/fines";
     private static final String GET_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
     private static final String GET_VEHICLE_FINES_BY_VIN = "http://localhost:{PORT}/api/v1/fines/vehicleVin/{VIN}";
-    private static final String GET_VEHICLE_FINES_BY_LICENSE_PLATE = "http://localhost:{PORT}/api/v1/fines/vehicleLicensePlate/{LICENSE_PLATE}";
+    private static final String GET_VEHICLE_FINES_BY_LICENSE_PLATE = "http://localhost:{PORT}/api/v1/fines/vehicle/{LICENSE_PLATE}";
     private static final String UPDATE_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
     private static final String DELETE_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
 
