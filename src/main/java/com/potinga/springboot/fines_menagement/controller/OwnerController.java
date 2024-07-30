@@ -31,9 +31,10 @@ public class OwnerController {
     }
 
     @PutMapping("/{id}")
-    public UpdateOwnerResponse updateVehicle(@PathVariable Long id, @RequestBody UpdateOwnerRequest updateRequest) {
-        return ownerService.updateVehicle(id, updateRequest);
+    public UpdateOwnerResponse updateOwner(@PathVariable Long id, @RequestBody UpdateOwnerRequest updateRequest) {
+        return ownerService.updateOwner(id, updateRequest);
     }
+
     @DeleteMapping("/{id}")
     public void deleteOwner(@PathVariable Long id) {
         ownerService.deleteOwner(id);
