@@ -32,6 +32,10 @@ public class VehicleController {
     public VehicleByLPResponse getVehicleByLicensePlate(@PathVariable("licensePlate") String licensePlate) {
         return vehicleService.getVehicleByLicensePlate(licensePlate);
     }
+    @GetMapping("/vin/{vin}")
+    public VehicleByVinResponse getVehicleByVin(@PathVariable("vin") String vin) {
+        return vehicleService.getVehicleByVin(vin);
+    }
 
     @GetMapping
     public List<AllVehicleResponse> getAllVehicles() {

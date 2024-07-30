@@ -19,7 +19,7 @@ public class VehicleApiClient {
     private static final String GET_ALL_VEHICLES = "http://localhost:{PORT}/api/v1/vehicles";
     private static final String GET_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/id/{ID}";
     private static final String GET_VEHICLE_BY_LICENSEPLATE = "http://localhost:{PORT}/api/v1/vehicles/{LICENSEPLATE}";
-
+    private static final String GET_VEHICLE_BY_VIN = "http://localhost:{PORT}/api/v1/vehicles/vin/{VIN}";
     private static final String UPDATE_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
     private static final String TRANSFER_VEHICLE_TO_ANOTHER_OWNER = "http://localhost:{PORT}/api/v1/vehicles/{VEHICLE_ID}/transfer?newOwnerId={NEW_OWNER_ID}";
     private static final String DELETE_VEHICLE_BY_ID = "http://localhost:{PORT}/api/v1/vehicles/{ID}";
@@ -77,6 +77,21 @@ public class VehicleApiClient {
                         .replace("{PORT}", port)
                         .replace("{LICENSEPLATE}", licensePlate)).build(),
                 new ParameterizedTypeReference<VehicleByLPResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+
+    public VehicleByVinResponse getVehicleByVin(String port, String vin) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_VEHICLE_BY_VIN
+                        .replace("{PORT}", port)
+                        .replace("{VIN}", vin)).build(),
+                new ParameterizedTypeReference<VehicleByVinResponse>() {
                 }
         );
 

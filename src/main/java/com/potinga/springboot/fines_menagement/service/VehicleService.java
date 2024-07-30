@@ -95,6 +95,23 @@ public class VehicleService {
             throw new RuntimeException("Vehicle with license plate " + licensePlate + " not found");
         }
     }
+    public VehicleByVinResponse getVehicleByVin(String vin) {
+        Optional<VehicleEntity> optionalVehicle = vehicleRepository.findByVin(vin);
+        if (optionalVehicle.isPresent()) {
+            VehicleEntity vehicle = optionalVehicle.get();
+            VehicleByVinResponse response = new VehicleByVinResponse();
+            response.setId(vehicle.getId());
+            response.setMake(vehicle.getMake());
+            response.setModel(vehicle.getModel());
+            response.setVin(vehicle.getVin());
+            response.setYear(vehicle.getYear());
+            response.setLicensePlate(vehicle.getLicensePlate());
+            response.setOwnerId(vehicle.getOwner().getId());
+            return response;
+        } else {
+            throw new RuntimeException("Vehicle with vin " + vin + " not found");
+        }
+    }
     public UpdateVehicleResponse updateVehicle(Long vehicleId, UpdateVehicleRequest updateRequest) {
         Optional<VehicleEntity> optionalVehicle = vehicleRepository.findById(vehicleId);
         if (optionalVehicle.isPresent()) {
