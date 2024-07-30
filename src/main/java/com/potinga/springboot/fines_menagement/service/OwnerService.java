@@ -66,7 +66,8 @@ public class OwnerService {
             throw new RuntimeException("Owner not found for id: " + id);
         }
     }
-    public UpdateOwnerResponse updateVehicle(Long ownerId, UpdateOwnerRequest updateRequest) {
+
+    public UpdateOwnerResponse updateOwner(Long ownerId, UpdateOwnerRequest updateRequest) {
         Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);
         if (optionalOwner.isPresent()) {
             OwnerEntity owner = optionalOwner.get();

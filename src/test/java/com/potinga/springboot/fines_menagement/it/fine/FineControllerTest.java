@@ -226,7 +226,7 @@ class FineControllerTest {
 
         assertThat(allVehicleFinesResponse)
                 .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                 .containsAll(
                         List.of(
                                 AllFineResponse.builder()
