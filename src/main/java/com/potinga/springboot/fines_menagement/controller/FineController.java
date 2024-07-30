@@ -24,12 +24,7 @@ public class FineController {
     public FineByIdResponse getFineById(@PathVariable("id") Long id) {
         return fineService.getFineById(id);
     }
-
-    @GetMapping("/byLicensePlate/{licensePlate}")
-    public List<AllFineResponse>  getFineByLicensePlate(@PathVariable String licensePlate) {
-        return fineService.getFineByLicensePlate(licensePlate);
-    }
-
+    
     @GetMapping("/vehicle/{licensePlate}")
     public List<AllFineResponse> getAllVehicleFinesByLicensePlate(@PathVariable String licensePlate) {
         return fineService.getAllVehicleFinesByLicensePlate(licensePlate);
