@@ -190,6 +190,66 @@ class FineControllerTest {
     }
 
     @Test
+    @DisplayName("Get all fines by vehicle vin")
+    void getAllVehicleFinesByVinTest() {
+        //        GIVEN
+        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
+        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
+
+        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
+        vehicleEntityTransient.setOwner(persistedOwnerEntity);
+        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
+
+        FineEntity fine1Transient = RandomFine.builder().build().get();
+        fine1Transient.setOwner(persistedOwnerEntity);
+        fine1Transient.setVehicle(persistedVehicleEntity);
+
+        FineEntity fine2Transient = RandomFine.builder().build().get();
+        fine2Transient.setOwner(persistedOwnerEntity);
+        fine2Transient.setVehicle(persistedVehicleEntity);
+
+        VehicleEntity unrelatedVehicle = RandomVehicle.builder().build().get();
+        unrelatedVehicle.setOwner(persistedOwnerEntity);
+        VehicleEntity savedUnrelatedVehicle = vehicleRepository.save(unrelatedVehicle);
+
+        FineEntity unrelatedFine = RandomFine.builder().build().get();
+        unrelatedFine.setOwner(persistedOwnerEntity);
+        unrelatedFine.setVehicle(savedUnrelatedVehicle);
+
+        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, unrelatedFine));
+
+        //        WHEN
+        List<AllFineResponse> allVehicleFinesResponse = fineApiClient.getAllVehicleFinesByVin(port, persistedVehicleEntity.getVin());
+
+        //        THEN
+        allVehicleFinesResponse.forEach(fine -> assertThat(fine.getId()).isNotNull());
+
+        assertThat(allVehicleFinesResponse)
+                .hasSize(2)
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  
+                .containsAll(
+                        List.of(
+                                AllFineResponse.builder()
+                                        .amount(fine1Transient.getAmount())
+                                        .violation(fine1Transient.getViolation())
+                                        .date(fine1Transient.getDate())
+                                        .location(fine1Transient.getLocation())
+                                        .ownerId(persistedOwnerEntity.getId())
+                                        .vehicleId(persistedVehicleEntity.getId())
+                                        .build(),
+                                AllFineResponse.builder()
+                                        .amount(fine2Transient.getAmount())
+                                        .violation(fine2Transient.getViolation())
+                                        .date(fine2Transient.getDate())
+                                        .location(fine2Transient.getLocation())
+                                        .ownerId(persistedOwnerEntity.getId())
+                                        .vehicleId(persistedVehicleEntity.getId())
+                                        .build()
+                        )
+                );
+    }
+
+    @Test
     @DisplayName("Get fine by id")
     void getFineByIdTest() {
         //  Given
