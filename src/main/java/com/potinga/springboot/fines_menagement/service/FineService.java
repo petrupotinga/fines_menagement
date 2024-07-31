@@ -10,7 +10,6 @@ import com.potinga.springboot.fines_menagement.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -73,6 +72,20 @@ public class FineService {
     }
     public List<AllFineResponse> getAllVehicleFinesByLicensePlate(String licensePlate) {
         List<FineEntity> fines = fineRepository.findAllByVehicleLicensePlate(licensePlate);
+        return fines.stream()
+                .map(fine -> AllFineResponse.builder()
+                        .id(fine.getId())
+                        .amount(fine.getAmount())
+                        .violation(fine.getViolation())
+                        .date(fine.getDate())
+                        .location(fine.getLocation())
+                        .ownerId(fine.getOwner().getId())
+                        .vehicleId(fine.getVehicle().getId())
+                        .build())
+                .collect(Collectors.toList());
+    }
+    public List<AllFineResponse> getAllVehicleFinesByVin(String vin) {
+        List<FineEntity> fines = fineRepository.findAllByVehicleVin(vin);
         return fines.stream()
                 .map(fine -> AllFineResponse.builder()
                         .id(fine.getId())
