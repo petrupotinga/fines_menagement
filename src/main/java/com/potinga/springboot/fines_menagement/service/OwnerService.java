@@ -18,7 +18,7 @@ public class OwnerService {
     }
     public OwnerCreatedResponse createOwner(CreateOwnerRequest request) {
         OwnerEntity owner = new OwnerEntity();
-
+        owner.setIdnp(request.getIdnp());
         owner.setFirstName(request.getFirstName());
         owner.setLastName(request.getLastName());
         owner.setAddress(request.getAddress());
@@ -28,6 +28,7 @@ public class OwnerService {
 
         OwnerCreatedResponse response = new OwnerCreatedResponse();
         response.setId(saveOwner.getId());
+        response.setIdnp(request.getIdnp());
         response.setFirstName(saveOwner.getFirstName());
         response.setLastName(saveOwner.getLastName());
         response.setAddress(saveOwner.getAddress());
@@ -42,6 +43,7 @@ public class OwnerService {
         return owners.stream().map(owner -> {
             AllOwnerResponse response = new AllOwnerResponse();
             response.setId(owner.getId());
+            response.setIdnp(owner.getIdnp());
             response.setFirstName(owner.getFirstName());
             response.setLastName(owner.getLastName());
             response.setAddress(owner.getAddress());
@@ -56,6 +58,7 @@ public class OwnerService {
 
             OwnerByIdResponse response = new OwnerByIdResponse();
             response.setId(owner.getId());
+            response.setIdnp(owner.getIdnp());
             response.setFirstName(owner.getFirstName());
             response.setLastName(owner.getLastName());
             response.setAddress(owner.getAddress());
@@ -66,10 +69,12 @@ public class OwnerService {
             throw new RuntimeException("Owner not found for id: " + id);
         }
     }
-    public UpdateOwnerResponse updateVehicle(Long ownerId, UpdateOwnerRequest updateRequest) {
+
+    public UpdateOwnerResponse updateOwner(Long ownerId, UpdateOwnerRequest updateRequest) {
         Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);
         if (optionalOwner.isPresent()) {
             OwnerEntity owner = optionalOwner.get();
+            owner.setIdnp(updateRequest.getIdnp());
             owner.setFirstName(updateRequest.getFirstName());
             owner.setLastName(updateRequest.getLastName());
             owner.setAddress(updateRequest.getAddress());
@@ -78,6 +83,7 @@ public class OwnerService {
             ownerRepository.save(owner);
 
             UpdateOwnerResponse response = new UpdateOwnerResponse();
+            response.setIdnp(owner.getIdnp());
             response.setFirstName(owner.getFirstName());
             response.setLastName(owner.getLastName());
             response.setAddress(owner.getAddress());

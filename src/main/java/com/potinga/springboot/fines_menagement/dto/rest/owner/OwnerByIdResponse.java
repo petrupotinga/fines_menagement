@@ -11,13 +11,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OwnerByIdResponse {
     private Long id;
+    private String idnp;
     private String firstName;
     private String lastName;
     private String address;
     private String phoneNumber;
 
-    public OwnerByIdResponse(Long id, String firstName, String lastName, String address, String phoneNumber) {
+    public OwnerByIdResponse(Long id, String idnp, String firstName, String lastName, String address, String phoneNumber) {
         this.id = id;
+        this.idnp = idnp;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

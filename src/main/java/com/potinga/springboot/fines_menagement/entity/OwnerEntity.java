@@ -17,6 +17,7 @@ public class OwnerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String idnp;
     private String firstName;
     private String lastName;
     private String address;
@@ -27,7 +28,8 @@ public class OwnerEntity {
     private List<FineEntity> fines = new ArrayList<>();
 
 
-    public OwnerEntity(String firstName, String lastName, String address, String phoneNumber) {
+    public OwnerEntity(String idnp,String firstName, String lastName, String address, String phoneNumber) {
+        this.idnp = idnp;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
