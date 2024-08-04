@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 @Builder
 public class RandomCreateOwnerRequest implements Supplier<CreateOwnerRequest> {
     @Builder.Default
+    private final String idnp = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
     private final String firstName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
     private final String lastName = RandomStringUtils.randomAlphabetic(20);
@@ -19,6 +21,6 @@ public class RandomCreateOwnerRequest implements Supplier<CreateOwnerRequest> {
 
     @Override
     public CreateOwnerRequest get() {
-        return new CreateOwnerRequest(firstName, lastName, address, phoneNumber);
+        return new CreateOwnerRequest(idnp,firstName, lastName, address, phoneNumber);
     }
 }
