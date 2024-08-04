@@ -160,6 +160,38 @@ class VehicleControllerTest {
     }
 
     @Test
+    @DisplayName("Get vehicle by vin")
+    void getVehicleByVinTest() {
+        // Given
+        OwnerEntity ownerTransient = RandomOwner.builder().build().get();
+        OwnerEntity persistedOwner = ownerRepository.save(ownerTransient);
+
+        VehicleEntity vehicleTransient = RandomVehicle.builder().build().get();
+        vehicleTransient.setOwner(persistedOwner);
+
+        VehicleEntity persistedVehicle = vehicleRepository.save(vehicleTransient);
+
+        // When
+        VehicleByVinResponse vehicleResponse = vehicleApiClient.getVehicleByVin(port, persistedVehicle.getVin());
+
+        // Then
+        assertThat(vehicleResponse.getVin()).isNotNull();
+
+        assertThat(vehicleResponse)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id") // Ignores the 'id' field in comparison
+                        .build())
+                .isEqualTo(VehicleByVinResponse.builder()
+                        .vin(persistedVehicle.getVin())
+                        .licensePlate(persistedVehicle.getLicensePlate())
+                        .make(persistedVehicle.getMake())
+                        .model(persistedVehicle.getModel())
+                        .year(persistedVehicle.getYear())
+                        .ownerId(persistedOwner.getId())
+                        .build());
+    }
+
+    @Test
     @DisplayName("Get vehicle by id")
     void getVehicleByIdTest() {
         //  Given
