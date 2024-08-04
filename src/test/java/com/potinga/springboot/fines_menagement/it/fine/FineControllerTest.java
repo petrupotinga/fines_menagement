@@ -292,6 +292,7 @@ class FineControllerTest {
     @DisplayName("Update fine")
     void updateFineTest() {
         OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setIdnp(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
@@ -341,6 +342,7 @@ class FineControllerTest {
     @DisplayName("Delete fine by id")
     void deleteFineTest() {
         OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setIdnp(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
@@ -377,6 +379,8 @@ class FineControllerTest {
 @Builder
 class RandomOwner implements Supplier<OwnerEntity> {
     @Builder.Default
+    private final String idnp = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
     private final String firstName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
     private final String lastName = RandomStringUtils.randomAlphabetic(20);
@@ -387,7 +391,7 @@ class RandomOwner implements Supplier<OwnerEntity> {
 
     @Override
         public OwnerEntity get() {
-            return new OwnerEntity(firstName, lastName, address, phoneNumber);
+            return new OwnerEntity(idnp,firstName, lastName, address, phoneNumber);
         }
     }
 

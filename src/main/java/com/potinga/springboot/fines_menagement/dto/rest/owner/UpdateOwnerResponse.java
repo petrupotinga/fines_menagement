@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 public class UpdateOwnerResponse {
+    private String idnp;
     private String firstName;
     private String lastName;
     private String address;

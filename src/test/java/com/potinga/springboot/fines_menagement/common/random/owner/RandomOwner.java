@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 @Builder
 public class RandomOwner implements Supplier<OwnerEntity> {
     @Builder.Default
+    private final String idnp = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
     private final String firstName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
     private final String lastName = RandomStringUtils.randomAlphabetic(20);
@@ -19,6 +21,6 @@ public class RandomOwner implements Supplier<OwnerEntity> {
 
     @Override
     public OwnerEntity get() {
-        return new OwnerEntity(firstName, lastName, address, phoneNumber);
+        return new OwnerEntity(idnp, firstName, lastName, address, phoneNumber);
     }
 }
