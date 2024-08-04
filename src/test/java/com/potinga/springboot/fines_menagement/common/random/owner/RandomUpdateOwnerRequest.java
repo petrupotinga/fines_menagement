@@ -15,12 +15,14 @@ public class RandomUpdateOwnerRequest implements Supplier<UpdateOwnerRequest> {
     @Builder.Default
     private final String lastName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
+    private final String birthDate = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
     private final String address = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
     private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
 
     @Override
     public UpdateOwnerRequest get() {
-        return new UpdateOwnerRequest(idnp,firstName, lastName, address, phoneNumber);
+        return new UpdateOwnerRequest(idnp,firstName, lastName, birthDate, address, phoneNumber);
     }
 }

@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OwnerByIdResponse {
+public class OwnerByNameAndDateResponse {
     private Long id;
     private String idnp;
     private String firstName;

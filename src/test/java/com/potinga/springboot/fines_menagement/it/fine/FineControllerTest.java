@@ -295,6 +295,7 @@ class FineControllerTest {
         ownerEntity.setIdnp(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setBirthDate(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
         OwnerEntity owner = ownerRepository.save(ownerEntity);
@@ -345,6 +346,7 @@ class FineControllerTest {
         ownerEntity.setIdnp(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntity.setBirthDate(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setAddress(RandomStringUtils.randomAlphabetic(10));
         ownerEntity.setPhoneNumber(RandomStringUtils.randomNumeric(10));
         OwnerEntity owner = ownerRepository.save(ownerEntity);
@@ -385,13 +387,15 @@ class RandomOwner implements Supplier<OwnerEntity> {
     @Builder.Default
     private final String lastName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
+    private final String birthDate = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
     private final String address = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
     private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
 
     @Override
         public OwnerEntity get() {
-            return new OwnerEntity(idnp,firstName, lastName, address, phoneNumber);
+            return new OwnerEntity(idnp,firstName, lastName, birthDate, address, phoneNumber);
         }
     }
 

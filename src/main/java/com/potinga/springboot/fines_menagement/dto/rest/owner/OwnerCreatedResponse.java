@@ -1,28 +1,18 @@
 package com.potinga.springboot.fines_menagement.dto.rest.owner;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OwnerCreatedResponse {
     private Long id;
     private String idnp;
     private String firstName;
     private String lastName;
+    private String birthDate;
     private String address;
     private String phoneNumber;
-
-    public OwnerCreatedResponse(Long id,String idnp, String firstName, String lastName, String address, String phoneNumber) {
-        this.idnp = idnp;
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-    }
 }
