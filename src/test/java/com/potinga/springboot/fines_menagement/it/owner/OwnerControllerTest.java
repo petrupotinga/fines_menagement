@@ -13,10 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +45,7 @@ class OwnerControllerTest {
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
                 .isEqualTo(OwnerCreatedResponse.builder()
+                        .idnp(createOwnerRequest.getIdnp())
                         .firstName(createOwnerRequest.getFirstName())
                         .lastName(createOwnerRequest.getLastName())
                         .address(createOwnerRequest.getAddress())
@@ -73,6 +72,7 @@ class OwnerControllerTest {
                         .withIgnoredFields("id") // Ignores the 'id' field in comparison
                         .build())
                 .isEqualTo(OwnerByIdResponse.builder()
+                        .idnp(ownerEntity.getIdnp())
                         .firstName(ownerEntity.getFirstName())
                         .lastName(ownerEntity.getLastName())
                         .address(ownerEntity.getAddress())
@@ -102,12 +102,14 @@ class OwnerControllerTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")  // Ignores the 'id' field in comparison
                 .containsAll(List.of(
                         AllOwnerResponse.builder()
+                                .idnp(ownerEntityTransient1.getIdnp())
                                 .firstName(ownerEntityTransient1.getFirstName())
                                 .lastName(ownerEntityTransient1.getLastName())
                                 .address(ownerEntityTransient1.getAddress())
                                 .phoneNumber(ownerEntityTransient1.getPhoneNumber())
                                 .build(),
                         AllOwnerResponse.builder()
+                                .idnp(ownerEntityTransient2.getIdnp())
                                 .firstName(ownerEntityTransient2.getFirstName())
                                 .lastName(ownerEntityTransient2.getLastName())
                                 .address(ownerEntityTransient2.getAddress())
@@ -139,6 +141,7 @@ class OwnerControllerTest {
                         .build())
                 .isEqualTo(
                         UpdateOwnerResponse.builder()
+                                .idnp(updateOwnerRequest.getIdnp())
                                 .firstName(updateOwnerRequest.getFirstName())
                                 .lastName(updateOwnerRequest.getLastName())
                                 .address(updateOwnerRequest.getAddress())
@@ -152,6 +155,7 @@ class OwnerControllerTest {
                         .build())
                 .isEqualTo(
                         UpdateOwnerResponse.builder()
+                                .idnp(ownerInDb.getIdnp())
                                 .firstName(ownerInDb.getFirstName())
                                 .lastName(ownerInDb.getLastName())
                                 .address(ownerInDb.getAddress())
