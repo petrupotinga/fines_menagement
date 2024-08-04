@@ -81,6 +81,33 @@ class OwnerControllerTest {
     }
 
     @Test
+    @DisplayName("Get owner by idnp")
+    void getOwnerByIdnp() {
+        ownerRepository.deleteAll();
+
+        // Given
+        OwnerEntity ownerEntity = RandomOwner.builder().build().get();
+        OwnerEntity persistedOwner = ownerRepository.save(ownerEntity);
+
+        // When
+        OwnerByIdnpResponse ownerByIdnpResponse = ownerApiClient.getOwnerByIdnp(port, persistedOwner.getIdnp());
+
+        // Then
+        assertThat(ownerByIdnpResponse.getIdnp()).isNotNull();
+
+        assertThat(ownerByIdnpResponse)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id") // Ignoră câmpul 'id' în comparație
+                        .build())
+                .isEqualTo(OwnerByIdnpResponse.builder()
+                        .idnp(ownerEntity.getIdnp())
+                        .firstName(ownerEntity.getFirstName())
+                        .lastName(ownerEntity.getLastName())
+                        .address(ownerEntity.getAddress())
+                        .phoneNumber(ownerEntity.getPhoneNumber())
+                        .build());
+    }
+    @Test
     @DisplayName("Get all owners")
     void getAllOwnersTest() {
         ownerRepository.deleteAll();

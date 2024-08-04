@@ -18,6 +18,7 @@ public class OwnerApiClient {
     private static final String SAVE_OWNER = "http://localhost:{PORT}/api/v1/owners";
     private static final String GET_ALL_OWNERS = "http://localhost:{PORT}/api/v1/owners";
     private static final String GET_OWNER_BY_ID = "http://localhost:{PORT}/api/v1/owners/{ID}";
+    private static final String GET_OWNER_BY_IDNP = "http://localhost:{PORT}/api/v1/owners/idnp/{IDNP}";
     private static final String UPDATE_OWNER_BY_ID = "http://localhost:{PORT}/api/v1/owners/{ID}";
     private static final String DELETE_OWNER_BY_ID = "http://localhost:{PORT}/api/v1/owners/{ID}";
 
@@ -59,6 +60,21 @@ public class OwnerApiClient {
                         .replace("{ID}", id.toString())
                 ).build(),
                 new ParameterizedTypeReference<OwnerByIdResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+    public OwnerByIdnpResponse getOwnerByIdnp(String port, String idnp) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_OWNER_BY_IDNP
+                        .replace("{PORT}", port)
+                        .replace("{IDNP}", idnp)
+                ).build(),
+                new ParameterizedTypeReference<OwnerByIdnpResponse>() {
                 }
         );
 
