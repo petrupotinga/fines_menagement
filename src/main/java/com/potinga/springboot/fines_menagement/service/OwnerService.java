@@ -69,6 +69,24 @@ public class OwnerService {
             throw new RuntimeException("Owner not found for id: " + id);
         }
     }
+    public OwnerByIdnpResponse getOwnerByIdnp(String idnp) {
+        Optional<OwnerEntity> optionalOwner = ownerRepository.findByIdnp(idnp);
+        if (optionalOwner.isPresent()) {
+            OwnerEntity owner = optionalOwner.get();
+
+            OwnerByIdnpResponse response = new OwnerByIdnpResponse();
+            response.setId(owner.getId());
+            response.setIdnp(owner.getIdnp());
+            response.setFirstName(owner.getFirstName());
+            response.setLastName(owner.getLastName());
+            response.setAddress(owner.getAddress());
+            response.setPhoneNumber(owner.getPhoneNumber());
+
+            return response;
+        } else {
+            throw new RuntimeException("Owner not found for idnp: " + idnp);
+        }
+    }
 
     public UpdateOwnerResponse updateOwner(Long ownerId, UpdateOwnerRequest updateRequest) {
         Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);

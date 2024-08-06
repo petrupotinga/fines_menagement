@@ -25,6 +25,11 @@ public class OwnerController {
         return ownerService.getOwnerById(id);
     }
 
+    @GetMapping("/idnp/{idnp}")
+    public OwnerByIdnpResponse getOwnerByIdnp(@PathVariable("idnp") String idnp) {
+        return ownerService.getOwnerByIdnp(idnp);
+    }
+
     @GetMapping
     public List<AllOwnerResponse> getAllOwners() {
         return ownerService.getAllOwners();
