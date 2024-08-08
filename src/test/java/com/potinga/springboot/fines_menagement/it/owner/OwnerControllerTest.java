@@ -48,6 +48,7 @@ class OwnerControllerTest {
                         .idnp(createOwnerRequest.getIdnp())
                         .firstName(createOwnerRequest.getFirstName())
                         .lastName(createOwnerRequest.getLastName())
+                        .birthDate(createOwnerRequest.getBirthDate())
                         .address(createOwnerRequest.getAddress())
                         .phoneNumber(createOwnerRequest.getPhoneNumber())
                         .build());
@@ -75,6 +76,7 @@ class OwnerControllerTest {
                         .idnp(ownerEntity.getIdnp())
                         .firstName(ownerEntity.getFirstName())
                         .lastName(ownerEntity.getLastName())
+                        .birthDate(ownerEntity.getBirthDate())
                         .address(ownerEntity.getAddress())
                         .phoneNumber(ownerEntity.getPhoneNumber())
                         .build());
@@ -103,10 +105,45 @@ class OwnerControllerTest {
                         .idnp(ownerEntity.getIdnp())
                         .firstName(ownerEntity.getFirstName())
                         .lastName(ownerEntity.getLastName())
+                        .birthDate(ownerEntity.getBirthDate())
                         .address(ownerEntity.getAddress())
                         .phoneNumber(ownerEntity.getPhoneNumber())
                         .build());
     }
+
+    @Test
+    @DisplayName("Get owner by firstName, lastName and birthDate")
+    void getByFirstNameLastNameBirthDate() {
+        ownerRepository.deleteAll();
+
+        // Given
+        OwnerEntity ownerEntity = RandomOwner.builder().build().get();
+        OwnerEntity persistedOwner = ownerRepository.save(ownerEntity);
+
+        // When
+        OwnerByNameAndDateResponse ownerByNameResponse = ownerApiClient.getByFirstNameLastNameBirthDate(port, persistedOwner.getFirstName(), persistedOwner.getLastName(), persistedOwner.getBirthDate());
+
+        // Then
+        assertThat(ownerByNameResponse).isNotNull();
+        assertThat(ownerByNameResponse.getFirstName()).isEqualTo(persistedOwner.getFirstName());
+        assertThat(ownerByNameResponse.getLastName()).isEqualTo(persistedOwner.getLastName());
+        assertThat(ownerByNameResponse.getBirthDate()).isEqualTo(persistedOwner.getBirthDate());
+
+        assertThat(ownerByNameResponse)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id") // Ignoră câmpul 'id' în comparație
+                        .build())
+                .isEqualTo(OwnerByNameAndDateResponse.builder()
+                        .idnp(ownerEntity.getIdnp())
+                        .firstName(ownerEntity.getFirstName())
+                        .lastName(ownerEntity.getLastName())
+                        .birthDate(ownerEntity.getBirthDate())
+                        .address(ownerEntity.getAddress())
+                        .phoneNumber(ownerEntity.getPhoneNumber())
+                        .build());
+    }
+
+
     @Test
     @DisplayName("Get all owners")
     void getAllOwnersTest() {
@@ -133,12 +170,14 @@ class OwnerControllerTest {
                                 .firstName(ownerEntityTransient1.getFirstName())
                                 .lastName(ownerEntityTransient1.getLastName())
                                 .address(ownerEntityTransient1.getAddress())
+                                .birthDate(ownerEntityTransient1.getBirthDate())
                                 .phoneNumber(ownerEntityTransient1.getPhoneNumber())
                                 .build(),
                         AllOwnerResponse.builder()
                                 .idnp(ownerEntityTransient2.getIdnp())
                                 .firstName(ownerEntityTransient2.getFirstName())
                                 .lastName(ownerEntityTransient2.getLastName())
+                                .birthDate(ownerEntityTransient2.getBirthDate())
                                 .address(ownerEntityTransient2.getAddress())
                                 .phoneNumber(ownerEntityTransient2.getPhoneNumber())
                                 .build()
@@ -171,6 +210,7 @@ class OwnerControllerTest {
                                 .idnp(updateOwnerRequest.getIdnp())
                                 .firstName(updateOwnerRequest.getFirstName())
                                 .lastName(updateOwnerRequest.getLastName())
+                                .birthdate(updateOwnerRequest.getBirthDate())
                                 .address(updateOwnerRequest.getAddress())
                                 .phoneNumber(updateOwnerRequest.getPhoneNumber())
                                 .build()
@@ -185,6 +225,7 @@ class OwnerControllerTest {
                                 .idnp(ownerInDb.getIdnp())
                                 .firstName(ownerInDb.getFirstName())
                                 .lastName(ownerInDb.getLastName())
+                                .birthdate(ownerInDb.getBirthDate())
                                 .address(ownerInDb.getAddress())
                                 .phoneNumber(ownerInDb.getPhoneNumber())
                                 .build()
