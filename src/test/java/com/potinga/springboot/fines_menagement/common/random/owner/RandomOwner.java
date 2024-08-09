@@ -15,12 +15,14 @@ public class RandomOwner implements Supplier<OwnerEntity> {
     @Builder.Default
     private final String lastName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
+    private final String birthDate = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
     private final String address = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
     private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
 
     @Override
     public OwnerEntity get() {
-        return new OwnerEntity(idnp, firstName, lastName, address, phoneNumber);
+        return new OwnerEntity(idnp, firstName, lastName, birthDate, address, phoneNumber);
     }
 }

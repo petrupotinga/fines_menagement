@@ -15,12 +15,14 @@ public class RandomCreateOwnerRequest implements Supplier<CreateOwnerRequest> {
     @Builder.Default
     private final String lastName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
+    private final String birthDate = RandomStringUtils.randomAlphabetic(20);
+    @Builder.Default
     private final String address = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default
     private final String phoneNumber = RandomStringUtils.randomAlphabetic(20);
 
     @Override
     public CreateOwnerRequest get() {
-        return new CreateOwnerRequest(idnp,firstName, lastName, address, phoneNumber);
+        return new CreateOwnerRequest(idnp,firstName, lastName, birthDate, address, phoneNumber);
     }
 }
