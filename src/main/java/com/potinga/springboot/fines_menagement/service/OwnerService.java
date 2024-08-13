@@ -21,6 +21,7 @@ public class OwnerService {
         owner.setIdnp(request.getIdnp());
         owner.setFirstName(request.getFirstName());
         owner.setLastName(request.getLastName());
+        owner.setBirthDate(request.getBirthDate());
         owner.setAddress(request.getAddress());
         owner.setPhoneNumber(request.getPhoneNumber());
 
@@ -31,6 +32,7 @@ public class OwnerService {
         response.setIdnp(request.getIdnp());
         response.setFirstName(saveOwner.getFirstName());
         response.setLastName(saveOwner.getLastName());
+        response.setBirthDate(saveOwner.getBirthDate());
         response.setAddress(saveOwner.getAddress());
         response.setPhoneNumber(saveOwner.getPhoneNumber());
 
@@ -46,6 +48,7 @@ public class OwnerService {
             response.setIdnp(owner.getIdnp());
             response.setFirstName(owner.getFirstName());
             response.setLastName(owner.getLastName());
+            response.setBirthDate(owner.getBirthDate());
             response.setAddress(owner.getAddress());
             response.setPhoneNumber(owner.getPhoneNumber());
             return response;
@@ -61,6 +64,7 @@ public class OwnerService {
             response.setIdnp(owner.getIdnp());
             response.setFirstName(owner.getFirstName());
             response.setLastName(owner.getLastName());
+            response.setBirthDate(owner.getBirthDate());
             response.setAddress(owner.getAddress());
             response.setPhoneNumber(owner.getPhoneNumber());
 
@@ -79,12 +83,33 @@ public class OwnerService {
             response.setIdnp(owner.getIdnp());
             response.setFirstName(owner.getFirstName());
             response.setLastName(owner.getLastName());
+            response.setBirthDate(owner.getBirthDate());
             response.setAddress(owner.getAddress());
             response.setPhoneNumber(owner.getPhoneNumber());
 
             return response;
         } else {
             throw new RuntimeException("Owner not found for idnp: " + idnp);
+        }
+    }
+
+    public OwnerByNameAndDateResponse getByFirstNameLastNameBirthDate(String firstName, String lastName, String birthDate) {
+        Optional<OwnerEntity> optionalOwner = ownerRepository.findByFirstNameAndLastNameAndBirthDate(firstName, lastName, birthDate);
+        if (optionalOwner.isPresent()) {
+            OwnerEntity owner = optionalOwner.get();
+
+            OwnerByNameAndDateResponse response = new OwnerByNameAndDateResponse();
+            response.setId(owner.getId());
+            response.setFirstName(owner.getFirstName());
+            response.setLastName(owner.getLastName());
+            response.setBirthDate(owner.getBirthDate());
+            response.setIdnp(owner.getIdnp());
+            response.setAddress(owner.getAddress());
+            response.setPhoneNumber(owner.getPhoneNumber());
+
+            return response;
+        } else {
+            throw new RuntimeException("Owner not found for FirstName, LastName and Birthdate: " + firstName + " " + lastName + " " + birthDate);
         }
     }
 
@@ -95,6 +120,7 @@ public class OwnerService {
             owner.setIdnp(updateRequest.getIdnp());
             owner.setFirstName(updateRequest.getFirstName());
             owner.setLastName(updateRequest.getLastName());
+            owner.setBirthDate(updateRequest.getBirthDate());
             owner.setAddress(updateRequest.getAddress());
             owner.setPhoneNumber(updateRequest.getPhoneNumber());
 
@@ -104,6 +130,7 @@ public class OwnerService {
             response.setIdnp(owner.getIdnp());
             response.setFirstName(owner.getFirstName());
             response.setLastName(owner.getLastName());
+            response.setBirthdate(owner.getBirthDate());
             response.setAddress(owner.getAddress());
             response.setPhoneNumber(owner.getPhoneNumber());
 
