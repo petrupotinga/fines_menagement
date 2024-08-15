@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 @Builder
 public class RandomUpdateOwnerRequest implements Supplier<UpdateOwnerRequest> {
     @Builder.Default
-    private final String idnp = RandomStringUtils.randomAlphabetic(20);
+    private final String idnp = RandomStringUtils.randomAlphabetic(13);
     @Builder.Default
     private final String firstName = RandomStringUtils.randomAlphabetic(20);
     @Builder.Default

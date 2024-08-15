@@ -33,8 +33,10 @@ class VehicleRepositoryTest {
     void testUniqueVinConstraint() {
         //  Given
         OwnerEntity ownerEntityTransient = new OwnerEntity();
+        ownerEntityTransient.setIdnp(RandomStringUtils.randomAlphabetic(13));
         ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setBirthDate(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
@@ -71,8 +73,10 @@ class VehicleRepositoryTest {
     void testUniqueLicencePlateConstraint() {
         //  Given
         OwnerEntity ownerEntityTransient = new OwnerEntity();
+        ownerEntityTransient.setIdnp(RandomStringUtils.randomAlphabetic(13));
         ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setBirthDate(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
@@ -109,9 +113,11 @@ class VehicleRepositoryTest {
     void testDeleteVehicle() {
         //  Given
         OwnerEntity ownerEntityTransient = new OwnerEntity();
+        ownerEntityTransient.setIdnp(RandomStringUtils.randomAlphabetic(13));
         ownerEntityTransient.setFirstName(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setLastName(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setAddress(RandomStringUtils.randomAlphabetic(10));
+        ownerEntityTransient.setBirthDate(RandomStringUtils.randomAlphabetic(10));
         ownerEntityTransient.setPhoneNumber(RandomStringUtils.randomNumeric(10));
         OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
 
