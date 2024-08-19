@@ -376,6 +376,45 @@ class FineControllerTest {
         boolean fineExists = fineRepository.existsById(persistedFine.getId());
         assertThat(fineExists).isFalse();
     }
+
+    @Test
+    @DisplayName("Obține statistici generale despre amenzile emise")
+    void getFineStatisticsTest() {
+        // Șterge toate amenzile existente pentru a începe cu un mediu curat
+        fineRepository.deleteAll();
+
+        //  Given
+        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
+        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
+
+        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
+        vehicleEntityTransient.setOwner(persistedOwnerEntity);
+        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
+
+        FineEntity fine1Transient = RandomFine.builder().amount(500D).build().get();
+        fine1Transient.setOwner(persistedOwnerEntity);
+        fine1Transient.setVehicle(persistedVehicleEntity);
+
+        FineEntity fine2Transient = RandomFine.builder().amount(700D).build().get();
+        fine2Transient.setOwner(persistedOwnerEntity);
+        fine2Transient.setVehicle(persistedVehicleEntity);
+
+        fineRepository.saveAll(List.of(fine1Transient, fine2Transient));
+
+        // When
+        FineStatisticsResponse fineStatisticsResponse = fineApiClient.getFineStatistics(port);
+
+        // Calculează statistici
+        double sumaTotala = fineStatisticsResponse.getTotalAmount();
+        double mediaAmendelor = fineStatisticsResponse.getAverageAmount();
+        long numarTotalAmenzi = fineStatisticsResponse.getTotalFines();
+
+        // Then
+        assertThat(sumaTotala).isEqualTo(1200D);
+        assertThat(mediaAmendelor).isEqualTo(600D);
+        assertThat(numarTotalAmenzi).isEqualTo(2);
+
+    }
 }
 
 @Builder

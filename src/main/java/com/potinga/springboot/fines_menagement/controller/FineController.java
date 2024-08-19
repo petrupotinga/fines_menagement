@@ -47,4 +47,8 @@ public class FineController {
     public void deleteFine(@PathVariable Long id) {
         fineService.deleteFine(id);
     }
+    @GetMapping("/statistics")
+    public FineStatisticsResponse getFineStatistics() {
+        return fineService.getFineStatistics();
+    }
 }
