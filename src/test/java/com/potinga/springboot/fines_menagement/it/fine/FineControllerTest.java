@@ -378,7 +378,7 @@ class FineControllerTest {
     }
 
     @Test
-    @DisplayName("Obține statistici generale despre amenzile emise")
+    @DisplayName("Obtain general statistics about issued fines")
     void getFineStatisticsTest() {
         // Șterge toate amenzile existente pentru a începe cu un mediu curat
         fineRepository.deleteAll();
@@ -414,6 +414,45 @@ class FineControllerTest {
         assertThat(mediaAmendelor).isEqualTo(600D);
         assertThat(numarTotalAmenzi).isEqualTo(2);
 
+    }
+    @Test
+    @DisplayName("Obtain statistics about fines with a specific violation")
+    void getFineStatisticsByViolationTest() {
+        // Șterge toate amenzile existente pentru a începe cu un mediu curat
+        fineRepository.deleteAll();
+
+        //  Given
+        OwnerEntity ownerEntityTransient = RandomOwner.builder().build().get();
+        OwnerEntity persistedOwnerEntity = ownerRepository.save(ownerEntityTransient);
+
+        VehicleEntity vehicleEntityTransient = RandomVehicle.builder().build().get();
+        vehicleEntityTransient.setOwner(persistedOwnerEntity);
+        VehicleEntity persistedVehicleEntity = vehicleRepository.save(vehicleEntityTransient);
+
+        FineEntity fine1Transient = RandomFine.builder().amount(500D).violation("Speeding").build().get();
+        fine1Transient.setOwner(persistedOwnerEntity);
+        fine1Transient.setVehicle(persistedVehicleEntity);
+
+        FineEntity fine2Transient = RandomFine.builder().amount(700D).violation("Speeding").build().get();
+        fine2Transient.setOwner(persistedOwnerEntity);
+        fine2Transient.setVehicle(persistedVehicleEntity);
+
+        FineEntity fine3Transient = RandomFine.builder().amount(300D).violation("Parking").build().get();
+        fine3Transient.setOwner(persistedOwnerEntity);
+        fine3Transient.setVehicle(persistedVehicleEntity);
+
+        fineRepository.saveAll(List.of(fine1Transient, fine2Transient, fine3Transient));
+
+        // When
+        FineStatisticsResponse fineStatisticsResponse = fineApiClient.getFineStatisticsByViolation(port, "Speeding");
+
+        // Calculează statistici
+        double sumaTotala = fineStatisticsResponse.getTotalAmount();
+        long numarTotalAmenzi = fineStatisticsResponse.getTotalFines();
+
+        // Then
+        assertThat(sumaTotala).isEqualTo(1200D);  // 500 + 700
+        assertThat(numarTotalAmenzi).isEqualTo(2);   // Numărul de amenzi cu încălcarea "Speeding"
     }
 }
 

@@ -14,4 +14,5 @@ public interface FineRepository extends JpaRepository<FineEntity, Long> {
     List<FineEntity> findAllByVehicleLicensePlate(@Param("licensePlate") String licensePlate);
     @Query("SELECT f FROM FineEntity f WHERE f.vehicle.vin = :vin")
     List<FineEntity> findAllByVehicleVin(@Param("vin") String vin);
+    List<FineEntity> findAllByViolation(String violation);
 }

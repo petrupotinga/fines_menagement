@@ -155,4 +155,18 @@ public class FineService {
 
         return response;
     }
+    public FineStatisticsResponse getFineStatisticsByViolation(String violation) {
+        List<FineEntity> fines = fineRepository.findAllByViolation(violation);
+        double totalAmount = fines.stream()
+                .mapToDouble(FineEntity::getAmount)
+                .sum();
+        long totalFines = fines.size();
+        double averageAmount = totalFines > 0 ? totalAmount / totalFines : 0;
+
+        FineStatisticsResponse response = new FineStatisticsResponse();
+        response.setTotalAmount(totalAmount);
+        response.setTotalFines(totalFines);
+
+        return response;
+    }
 }
