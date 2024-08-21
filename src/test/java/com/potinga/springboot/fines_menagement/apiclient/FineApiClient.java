@@ -22,6 +22,8 @@ public class FineApiClient {
     private static final String UPDATE_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
     private static final String DELETE_FINE_BY_ID = "http://localhost:{PORT}/api/v1/fines/{ID}";
     private static final String GET_FINE_STATISTICS = "http://localhost:{PORT}/api/v1/fines/statistics";
+    private static final String GET_FINE_STATISTICS_BY_VIOLATION = "http://localhost:{PORT}/api/v1/fines/statistics/{VIOLATION}";
+
 
 
     @Autowired
@@ -132,6 +134,21 @@ public class FineApiClient {
     public FineStatisticsResponse getFineStatistics(String port) {
         var response = baseRestTemplate.exchange(
                 RequestEntity.get(GET_FINE_STATISTICS.replace("{PORT}", port)).build(),
+                new ParameterizedTypeReference<FineStatisticsResponse>() {
+                }
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+
+        return response.getBody();
+    }
+    public FineStatisticsResponse getFineStatisticsByViolation(String port, String violation) {
+        var response = baseRestTemplate.exchange(
+                RequestEntity.get(GET_FINE_STATISTICS_BY_VIOLATION
+                                .replace("{PORT}", port)
+                                .replace("{VIOLATION}", violation))
+                        .build(),
                 new ParameterizedTypeReference<FineStatisticsResponse>() {
                 }
         );
