@@ -141,4 +141,18 @@ public class FineService {
 
         fineRepository.delete(fine);
     }
+    public FineStatisticsResponse getFineStatistics() {
+        long totalFines = fineRepository.count();
+        double totalAmount = fineRepository.findAll().stream()
+                .mapToDouble(FineEntity::getAmount)
+                .sum();
+        double averageAmount = totalFines > 0 ? totalAmount / totalFines : 0;
+
+        FineStatisticsResponse response = new FineStatisticsResponse();
+        response.setTotalFines(totalFines);
+        response.setTotalAmount(totalAmount);
+        response.setAverageAmount(averageAmount);
+
+        return response;
+    }
 }
