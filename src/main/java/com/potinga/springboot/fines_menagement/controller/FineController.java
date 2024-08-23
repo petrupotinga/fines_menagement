@@ -51,4 +51,8 @@ public class FineController {
     public FineStatisticsResponse getFineStatistics() {
         return fineService.getFineStatistics();
     }
+    @GetMapping("/statistics/{violation}")
+    public FineStatisticsResponse getFineStatisticsByViolation(@PathVariable String violation) {
+        return fineService.getFineStatisticsByViolation(violation);
+    }
 }
