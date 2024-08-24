@@ -30,13 +30,11 @@ public class OwnerController {
         return ownerService.getOwnerByIdnp(idnp);
     }
 
-    @GetMapping("/{firstName}/{lastName}/{birthDate}")
-    public OwnerByNameAndDateResponse getByFirstNameLastNameBirthDate(
-            @PathVariable("firstName") String firstName,
-            @PathVariable("lastName") String lastName,
-            @PathVariable("birthDate") String birthDate) {
-        return ownerService.getByFirstNameLastNameBirthDate(firstName, lastName, birthDate);
+    @PostMapping("/getByNameAndDate")
+    public OwnerByNameAndDateResponse getByFirstNameLastNameBirthDate(@RequestBody OwnerRequest request) {
+        return ownerService.getByFirstNameLastNameBirthDate(request.getFirstName(), request.getLastName(), request.getBirthDate());
     }
+
 
     @GetMapping
     public List<AllOwnerResponse> getAllOwners() {
