@@ -4,9 +4,11 @@ import com.potinga.springboot.fines_menagement.common.BaseRestTemplate;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +21,7 @@ public class OwnerApiClient {
     private static final String GET_ALL_OWNERS = "http://localhost:{PORT}/api/v1/owners";
     private static final String GET_OWNER_BY_ID = "http://localhost:{PORT}/api/v1/owners/{ID}";
     private static final String GET_OWNER_BY_IDNP = "http://localhost:{PORT}/api/v1/owners/idnp/{IDNP}";
-    private static final String GET_OWNER_BY_NAME = "http://localhost:{PORT}/api/v1/owners/{firstName}/{lastName}/{birthDate}";
+    private static final String GET_OWNER_BY_NAME = "http://localhost:{PORT}/api/v1/owners/getByNameAndDate";
     private static final String UPDATE_OWNER_BY_ID = "http://localhost:{PORT}/api/v1/owners/{ID}";
     private static final String DELETE_OWNER_BY_ID = "http://localhost:{PORT}/api/v1/owners/{ID}";
 
@@ -87,22 +89,25 @@ public class OwnerApiClient {
     }
 
     public OwnerByNameAndDateResponse getByFirstNameLastNameBirthDate(String port, String firstName, String lastName, String birthDate) {
+        // Construiește corpul cererii ca un obiect JSON
+        OwnerRequest requestBody = new OwnerRequest(firstName,lastName,birthDate);
+
+        // Creează un RequestEntity de tip POST cu corpul cererii
         var response = baseRestTemplate.exchange(
-                RequestEntity.get(GET_OWNER_BY_NAME
-                        .replace("{PORT}", port)
-                        .replace("{firstName}", firstName)
-                        .replace("{lastName}", lastName)
-                        .replace("{birthDate}", birthDate)
-                ).build(),
+                RequestEntity.post(URI.create(GET_OWNER_BY_NAME.replace("{PORT}", port)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(requestBody),
                 new ParameterizedTypeReference<OwnerByNameAndDateResponse>() {
                 }
         );
 
+        // Asigură-te că răspunsul nu este null și că este 2xx Successful
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
 
         return response.getBody();
     }
+
 
     public UpdateOwnerResponse updateOwner(String port, Long id, UpdateOwnerRequest request) {
         var response = baseRestTemplate.exchange(
