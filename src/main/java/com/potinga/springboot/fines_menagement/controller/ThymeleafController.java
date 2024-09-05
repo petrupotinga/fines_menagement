@@ -1,7 +1,9 @@
 package com.potinga.springboot.fines_menagement.controller;
 
+import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
+import com.potinga.springboot.fines_menagement.service.FineService;
 import com.potinga.springboot.fines_menagement.service.OwnerService;
 import com.potinga.springboot.fines_menagement.service.VehicleService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,10 +18,12 @@ import java.util.List;
 public class ThymeleafController {
     private final OwnerService ownerService;
     private final VehicleService vehicleService;
+    private final FineService fineService;
 
-    public ThymeleafController(OwnerService ownerService, VehicleService vehicleService) {
+    public ThymeleafController(OwnerService ownerService, VehicleService vehicleService, FineService fineService) {
         this.ownerService = ownerService;
         this.vehicleService = vehicleService;
+        this.fineService = fineService;
     }
 
     @GetMapping("/ownersView")
@@ -33,5 +37,11 @@ public class ThymeleafController {
         List<AllVehicleResponse> vehicles = vehicleService.getAllVehicles();
         model.addAttribute("vehicles", vehicles);
         return "vehiclesView";
+    }
+    @GetMapping("/finesView")
+    public String getFinesView(Model model) {
+        List<AllFineResponse> fines = fineService.getAllFines();
+        model.addAttribute("fines", fines);
+        return "finesView";
     }
 }
