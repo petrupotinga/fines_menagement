@@ -12,17 +12,17 @@ import lombok.Setter;
 public class CreateVehicleRequest {
     private String vin;
     private String licensePlate;
-    private Long ownerId;
     private String make;
     private String model;
     private int year;
+    private Long ownerId;
 
-    public CreateVehicleRequest(String vin, String licensePlate, Long ownerId, String make, String model, int year) {
+    public CreateVehicleRequest(String vin, String licensePlate, String make, String model, int year, Long ownerId) {
         this.vin = vin;
         this.licensePlate = licensePlate;
-        this.ownerId = ownerId;
         this.make = make;
         this.model = model;
         this.year = year;
+        this.ownerId = ownerId;
     }
 }
