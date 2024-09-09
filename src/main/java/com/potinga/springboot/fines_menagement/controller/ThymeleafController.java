@@ -3,6 +3,7 @@ package com.potinga.springboot.fines_menagement.controller;
 import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
 import com.potinga.springboot.fines_menagement.service.FineService;
 import com.potinga.springboot.fines_menagement.service.OwnerService;
 import com.potinga.springboot.fines_menagement.service.VehicleService;
@@ -10,6 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -43,5 +46,10 @@ public class ThymeleafController {
         List<AllFineResponse> fines = fineService.getAllFines();
         model.addAttribute("fines", fines);
         return "finesView";
+    }
+    @PostMapping("/vehicles")
+    public String createVehicle(@ModelAttribute CreateVehicleRequest vehicleRequest) {
+        vehicleService.createVehicle(vehicleRequest);
+        return "redirect:/vehiclesView"; // Redirecționează înapoi la pagina cu lista vehiculelor
     }
 }
