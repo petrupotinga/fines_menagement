@@ -2,6 +2,7 @@ package com.potinga.springboot.fines_menagement.controller;
 
 import com.potinga.springboot.fines_menagement.dto.rest.fine.AllFineResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.owner.AllOwnerResponse;
+import com.potinga.springboot.fines_menagement.dto.rest.owner.CreateOwnerRequest;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.AllVehicleResponse;
 import com.potinga.springboot.fines_menagement.dto.rest.vehicle.CreateVehicleRequest;
 import com.potinga.springboot.fines_menagement.service.FineService;
@@ -51,5 +52,10 @@ public class ThymeleafController {
     public String createVehicle(@ModelAttribute CreateVehicleRequest vehicleRequest) {
         vehicleService.createVehicle(vehicleRequest);
         return "redirect:/vehiclesView"; // Redirecționează înapoi la pagina cu lista vehiculelor
+    }
+    @PostMapping("/owners")
+    public String createOwners(@ModelAttribute CreateOwnerRequest ownerRequest) {
+        ownerService.createOwner(ownerRequest);
+        return "redirect:/ownersView";
     }
 }
