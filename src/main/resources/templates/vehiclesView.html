@@ -7,22 +7,53 @@
 </head>
 <body>
 <h1>Lista Vehiculelor</h1>
+
+<!-- Formular pentru adăugarea unui nou vehicul -->
+<form th:action="@{/vehicles}" method="post" class="mb-4">
+  <div class="form-group">
+    <label for="vin">VIN</label>
+    <input type="text" class="form-control" id="vin" name="vin" placeholder="Introduceți VIN-ul" required>
+  </div>
+  <div class="form-group">
+    <label for="licensePlate">Număr de înmatriculare</label>
+    <input type="text" class="form-control" id="licensePlate" name="licensePlate" placeholder="Introduceți numărul de înmatriculare" required>
+  </div>
+  <div class="form-group">
+    <label for="make">Marcă</label>
+    <input type="text" class="form-control" id="make" name="make" placeholder="Introduceți marca vehiculului" required>
+  </div>
+  <div class="form-group">
+    <label for="model">Model</label>
+    <input type="text" class="form-control" id="model" name="model" placeholder="Introduceți modelul vehiculului" required>
+  </div>
+  <div class="form-group">
+    <label for="year">An</label>
+    <input type="number" class="form-control" id="year" name="year" placeholder="Introduceți anul de fabricație" required>
+  </div>
+  <div class="form-group">
+    <label for="ownerId">ID Proprietar</label>
+    <input type="number" class="form-control" id="ownerId" name="ownerId" placeholder="Introduceți ID-ul proprietarului" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Salvează vehiculul</button>
+</form>
+
+<!-- Tabelul cu vehicule existente -->
 <table class="table table-striped table-hover">
   <thead class="thead-dark">
   <tr>
     <th>ID</th>
     <th>VIN</th>
-    <th>LicensePlate</th>
-    <th>Make</th>
+    <th>Număr de înmatriculare</th>
+    <th>Marcă</th>
     <th>Model</th>
-    <th>Year</th>
-    <th>OwnerId</th>
+    <th>An</th>
+    <th>ID Proprietar</th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="vehicle : ${vehicles}">
     <td th:text="${vehicle.id}"></td>
-    <td th:text="${vehicle.v,in}"></td>
+    <td th:text="${vehicle.vin}"></td>
     <td th:text="${vehicle.licensePlate}"></td>
     <td th:text="${vehicle.make}"></td>
     <td th:text="${vehicle.model}"></td>
