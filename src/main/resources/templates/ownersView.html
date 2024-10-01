@@ -7,6 +7,39 @@
 </head>
 <body>
 <h1>Lista Proprietarilor</h1>
+
+<!-- Formular pentru adăugarea unui nou vehicul -->
+<form th:action="@{/owners}" method="post" class="mb-4">
+    <div class="form-group">
+        <label for="idnp">IDNP</label>
+        <input type="number" class="form-control" id="idnp" name="idnp" placeholder="Introduceți IDNP-ul" required>
+    </div>
+    <div class="form-group">
+        <label for="firstName">Numele</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Introduceți numele"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="lastName">Prenume</label>
+        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Introduceți prenumele"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="birthDate">Data nasterii</label>
+        <input type="date" class="form-control" id="birthDate" name="birthDate" placeholder="Introduceți data nasterii"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="address">Adresa</label>
+        <input type="text" class="form-control" id="address" name="address" placeholder="Introduceți adresa" required>
+    </div>
+    <div class="form-group">
+        <label for="phoneNumber">Numarul de telefon</label>
+        <input type="text" class="form-control" id="phoneNumber" name="phoneNumber"
+               placeholder="Introduceți numarul de telefon" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Salvează proprietarul</button>
+</form>
 <table class="table table-striped table-hover">
     <thead class="thead-dark">
     <tr>
